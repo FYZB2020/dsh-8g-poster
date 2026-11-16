@@ -34,7 +34,7 @@ line(true, 'descriptors', `${TOOLS.length} 个工具都有 description + paramet
 {
   const r = await callTool('poster_editor', {})
   const f = path.join(ROOT, 'assets', 'editor', 'poster-editor.html')
-  line(fs.existsSync(f) && has(r.text, 'poster-editor.html'), 'poster_editor', fs.existsSync(f) ? `${(fs.statSync(f).size / 1048576).toFixed(1)}MB` : '文件缺失')
+  line(fs.existsSync(f) && has(r.text, '/api/poster-forge/editor'), 'poster_editor', fs.existsSync(f) ? `路由 + ${(fs.statSync(f).size / 1048576).toFixed(1)}MB` : '文件缺失')
 }
 
 {
