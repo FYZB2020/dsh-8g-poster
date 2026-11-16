@@ -36,9 +36,20 @@ def color_mask(arr, color, tol=14):
     return ((np.abs(r - tr) < tol) & (np.abs(g - tg) < tol) & (np.abs(b - tb) < tol))
 
 
+def imread_unicode(path):
+    """cv2.imread 在 Windows 下读不了含中文的路径，换成 imdecode。"""
+    try:
+        data = np.fromfile(path, dtype=np.uint8)
+        if data.size == 0:
+            return None
+        return cv2.imdecode(data, cv2.IMREAD_COLOR)
+    except Exception:
+        return None
+
+
 def detect(image, color="gray", tol=14, min_size=40, max_size=220,
            square_tol=0.35, fill_ratio=0.68, y_min_ratio=0.0, close=3):
-    bgr = cv2.imread(image)
+    bgr = imread_unicode(image)
     if bgr is None:
         sys.exit(f"cannot read image: {image}")
     H, W = bgr.shape[:2]

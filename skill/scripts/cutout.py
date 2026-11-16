@@ -19,8 +19,19 @@ import numpy as np
 from PIL import Image
 
 
+def imread_unicode(path):
+    """cv2.imread 在 Windows 下读不了含中文的路径，换成 imdecode。"""
+    try:
+        data = np.fromfile(path, dtype=np.uint8)
+        if data.size == 0:
+            return None
+        return cv2.imdecode(data, cv2.IMREAD_COLOR)
+    except Exception:
+        return None
+
+
 def cut(src, up=3, edge_band=0.04, iters=8, feather=1.6, keep_largest=True):
-    img = cv2.imread(src)
+    img = imread_unicode(src)
     if img is None:
         raise SystemExit(f"cannot read image: {src}")
     if up > 1:

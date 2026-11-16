@@ -142,6 +142,16 @@ const TOOLS = [
 ];
 
 async function callTool(name, args) {
+  log('call', name, JSON.stringify(args).slice(0, 120));
+  try {
+    return await callToolInner(name, args);
+  } catch (e) {
+    log('callTool threw', name, e && e.message);
+    return txt('工具执行失败：' + (e && e.message || e));
+  }
+}
+
+async function callToolInner(name, args) {
   switch (name) {
     case 'poster_editor': {
       const f = path.join(ASSETS, 'editor', 'poster-editor.html');
@@ -228,24 +238,38 @@ async function callTool(name, args) {
 const send = (o) => process.stdout.write(JSON.stringify(o) + '\n');
 
 let buf = '';
-process.stdin.on('data', async d => {
-  buf += d.toString('utf8');
-  let i;
-  while ((i = buf.indexOf('\n')) >= 0) {
-    const line = buf.slice(0, i).trim();
-    buf = buf.slice(i + 1);
-    if (!line) continue;
-    let msg;
-    try { msg = JSON.parse(line); } catch (e) { continue; }
-    await handle(msg);
-  }
-});
+let chain = Promise.resolve();
 
-process.stdin.on('end', async () => {
-  const line = buf.trim();
-  buf = '';
-  if (!line) return;
-  try { await handle(JSON.parse(line)); } catch (e) { }
+function drain() {
+  chain = chain.then(async () => {
+    let i;
+    while ((i = buf.indexOf('\n')) >= 0) {
+      const line = buf.slice(0, i).trim();
+      buf = buf.slice(i + 1);
+      if (!line) continue;
+      let msg;
+      try { msg = JSON.parse(line); } catch (e) { continue; }
+      await handle(msg);
+    }
+  }).catch(e => log('drain error', e && e.message));
+  return chain;
+}
+
+process.stdin.setEncoding('utf8');
+process.stdin.on('data', d => { buf += d; drain(); });
+
+process.stdin.on('end', () => {
+  chain = chain.then(async () => {
+    const rest = buf.trim();
+    buf = '';
+    if (!rest) return;
+    // 最后一行可能没换行；也可能是若干行都没换行结尾，逐行兜底
+    for (const line of rest.split('\n')) {
+      const s = line.trim();
+      if (!s) continue;
+      try { await handle(JSON.parse(s)); } catch (e) { }
+    }
+  }).catch(() => { });
 });
 
 async function handle(msg) {
