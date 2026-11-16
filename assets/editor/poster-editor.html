@@ -115,6 +115,39 @@
   }
   #copybox { display: none; margin-top: 8px; min-height: 90px; font-size: 11px; }
 </style>
+
+<style>
+/* ── 淡蓝主题（覆盖深色底） ── */
+body { background: linear-gradient(180deg,#f4f9ff 0%,#e7f0fc 55%,#dbe9fb 100%); color:#1b2a3d; }
+header { background: linear-gradient(180deg,#ffffff,#eef5fe); border-bottom:1px solid #cfe0f5; }
+header h1 { color:#12233a; }
+header h1 span { color:#c0272d; }
+.grp .gl { color:#6b7f96; }
+button { background:#fff; color:#1b2a3d; border:1px solid #c9dcf2; }
+button:hover { background:#eaf3ff; border-color:#a9c8e8; color:#12233a; }
+.sep { background:#d5e4f5; }
+aside { background:#fbfdff; border-left:1px solid #d7e6f7; }
+aside h2, #empty b { color:#6b7f96; }
+.row label, #empty { color:#4d6480; }
+.row input, .row input[type=color], textarea { background:#fff; color:#1b2a3d; border:1px solid #c9dcf2; }
+.v { color:#6b7f96; }
+.hint { color:#7b90a8; }
+#stagewrap { background:
+  linear-gradient(45deg,#eaf1fa 25%,transparent 25%) -12px 0/24px 24px,
+  linear-gradient(-45deg,#eaf1fa 25%,transparent 25%) -12px 0/24px 24px,
+  linear-gradient(45deg,transparent 75%,#eaf1fa 75%) 0 0/24px 24px,
+  linear-gradient(-45deg,transparent 75%,#eaf1fa 75%) 0 0/24px 24px, #f7fbff; }
+#keys { background:#fff; border:1px solid #cfe0f5; color:#1b2a3d; box-shadow:0 8px 24px rgba(20,60,110,.12); }
+#keys h3 { background:#eef5fe; color:#12233a; }
+#keys h3 span { color:#7b90a8; }
+#keys li b { color:#b26a1d; }
+#ftb { background:rgba(255,255,255,.97); border:1px solid #cfe0f5; box-shadow:0 8px 22px rgba(20,60,110,.16); }
+#ftb button { color:#33475f; }
+#ftb button:hover { background:#eaf3ff; color:#12233a; }
+#ftb .fsep { background:#d5e4f5; }
+.ic { filter:none !important; }
+#toast { background:#12233a; color:#eaf3ff; }
+</style>
 </head>
 <body>
 <header>
@@ -128,9 +161,9 @@
 
   <div class="grp"><span class="gl">选择</span>
     <button class="ghost" id="btn_selall" title="Ctrl+A">全选</button>
-    <button class="ghost" id="btn_group" title="Ctrl+G">组合</button>
-    <button class="ghost" id="btn_ungroup" title="Ctrl+Shift+G">取消组合</button>
-    <button class="ghost" id="btn_lock" title="Ctrl+L">锁定</button>
+    <button class="ghost" id="btn_group" title="组合（Ctrl+G）"><span class="ic" data-ic="group"></span></button>
+    <button class="ghost" id="btn_ungroup" title="取消组合（Ctrl+Shift+G）"><span class="ic" data-ic="layers"></span></button>
+    <button class="ghost" id="btn_lock" title="锁定 / 解锁（Ctrl+L）"><span class="ic" data-ic="lock"></span></button>
     <button class="ghost" id="btn_dup" title="Ctrl+D">复制</button>
     <button class="ghost" id="btn_del" title="删除（Delete）"><span class="ic" data-ic="trash"></span></button>
   </div>
@@ -141,12 +174,12 @@
   </div>
 
   <div class="grp"><span class="gl">对齐</span>
-    <button class="ghost" id="btn_al" title="左对齐">左</button>
-    <button class="ghost" id="btn_ac" title="水平居中">中</button>
-    <button class="ghost" id="btn_ar" title="右对齐">右</button>
-    <button class="ghost" id="btn_at" title="顶对齐">上</button>
-    <button class="ghost" id="btn_avc" title="垂直居中">中</button>
-    <button class="ghost" id="btn_ab" title="底对齐">下</button>
+    <button class="ghost" id="btn_al" title="左对齐">⇤</button>
+    <button class="ghost" id="btn_ac" title="水平居中">↔</button>
+    <button class="ghost" id="btn_ar" title="右对齐">⇥</button>
+    <button class="ghost" id="btn_at" title="顶对齐">⇡</button>
+    <button class="ghost" id="btn_avc" title="垂直居中">↕</button>
+    <button class="ghost" id="btn_ab" title="底对齐">⇣</button>
     <button class="ghost" id="btn_dh" title="选 3 个以上：两端不动，中间按间距均分">横等距</button>
     <button class="ghost" id="btn_dv" title="选 3 个以上：两端不动，中间按间距均分">纵等距</button>
     <button class="ghost" id="btn_center" title="Ctrl+E：水平+垂直居中到画布">画布居中</button>
@@ -157,15 +190,15 @@
   <div class="grp"><span class="gl">排布</span>
     <label style="color:#8b93a1">间距</label>
     <input id="i_gap" type="number" value="24" min="0" style="width:64px">
-    <button class="ghost" id="btn_gapx" title="按上面的间距横向排开">→ 横排</button>
-    <button class="ghost" id="btn_gapy" title="按上面的间距纵向排开">↓ 竖排</button>
+    <button class="ghost" id="btn_gapx" title="按上面的间距横向排开">⇉</button>
+    <button class="ghost" id="btn_gapy" title="按上面的间距纵向排开">⇊</button>
   </div>
 
   <div class="grp"><span class="gl">层级</span>
-    <button class="ghost" id="btn_down" title="下移一层（】）">下移</button>
-    <button class="ghost" id="btn_up" title="上移一层（【）">上移</button>
-    <button class="ghost" id="btn_top">置顶</button>
-    <button class="ghost" id="btn_bottom">置底</button>
+    <button class="ghost" id="btn_down" title="下移一层（】）">↓</button>
+    <button class="ghost" id="btn_up" title="上移一层（【）">↑</button>
+    <button class="ghost" id="btn_top">顶</button>
+    <button class="ghost" id="btn_bottom">底</button>
     <label style="color:#8b93a1">第</label>
     <input id="i_layerh" type="number" min="1" style="width:62px" placeholder="N">
     <label style="color:#8b93a1">层</label>
