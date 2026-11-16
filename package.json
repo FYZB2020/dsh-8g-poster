@@ -1,6 +1,6 @@
 {
   "name": "poster-forge",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "PosterForge · 海报锻造坊 —— 本地生图 + 素材合成 + 二维码防错校验 + 可编辑工作台 + 印刷件输出，一套给中文商业海报用的工具链。",
   "keywords": [
     "dsh-plugin",
