@@ -69,9 +69,8 @@ def build_prompt(prompt, neg, w, h, seed, steps, cfg, sampler, scheduler, prefix
                 "clip": ["10", 0], "prompt": text, "edit_format": edit_format,
                 "images.image_0": ["32", 0], "image_strength": image_strength, "vae": ["11", 0]}}
         pos, negc = ["33", 0], ["38", 0]
-        g["39"] = {"class_type": "VAEEncode", "inputs": {"pixels": ["32", 0], "vae": ["11", 0]}}
         g["40"] = {"class_type": "ImageScale", "inputs": {"image": ["32", 0], "upscale_method": "lanczos", "width": w, "height": h, "crop": "center"}}
-        g["39"] = {"class_type": "VAEEncode", "inputs": {"pixels": ["40", 0], "vae": ["11", 0]}},
+        g["39"] = {"class_type": "VAEEncode", "inputs": {"pixels": ["40", 0], "vae": ["11", 0]}}
 
     # ③ 色块/深度控制：控制 LoRA + MOSSImageControl
     if color_map or depth_map:

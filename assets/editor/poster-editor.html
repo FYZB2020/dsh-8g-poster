@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
@@ -121,9 +121,9 @@
   <h1>PosterForge · <span>海报工作台</span></h1>
 
   <div class="grp"><span class="gl">添加</span>
-    <button class="ghost" id="btn_text">+ 文字</button>
-    <button class="ghost" id="btn_rect">+ 色块</button>
-    <button class="ghost" id="btn_img">+ 图片</button>
+    <button class="ghost" id="btn_text" title="加文字"><span class="ic" data-ic="text"></span></button>
+    <button class="ghost" id="btn_rect" title="加色块"><span class="ic" data-ic="block"></span></button>
+    <button class="ghost" id="btn_img" title="加图片"><span class="ic" data-ic="image"></span></button>
   </div>
 
   <div class="grp"><span class="gl">选择</span>
@@ -132,12 +132,12 @@
     <button class="ghost" id="btn_ungroup" title="Ctrl+Shift+G">取消组合</button>
     <button class="ghost" id="btn_lock" title="Ctrl+L">锁定</button>
     <button class="ghost" id="btn_dup" title="Ctrl+D">复制</button>
-    <button class="ghost" id="btn_del" title="Delete">删除</button>
+    <button class="ghost" id="btn_del" title="删除（Delete）"><span class="ic" data-ic="trash"></span></button>
   </div>
 
   <div class="grp"><span class="gl">撤销</span>
-    <button class="ghost" id="btn_undo" title="Ctrl+Z">撤销</button>
-    <button class="ghost" id="btn_redo" title="Ctrl+Y">重做</button>
+    <button class="ghost" id="btn_undo" title="撤销（Ctrl+Z）"><span class="ic" data-ic="undo"></span></button>
+    <button class="ghost" id="btn_redo" title="重做（Ctrl+Y）"><span class="ic" data-ic="redo"></span></button>
   </div>
 
   <div class="grp"><span class="gl">对齐</span>
@@ -181,7 +181,7 @@
 
   <div class="grp"><span class="gl">项目</span>
     <button id="btn_save">存项目</button>
-    <button id="btn_copy" title="复制项目数据，可直接粘到对话里">复制给 DSH</button>
+
     <button id="btn_load">打开项目</button>
     <button class="ghost" id="btn_reset">还原</button>
     <button class="ghost" id="btn_fit">适配</button>
@@ -223,7 +223,7 @@
   <button data-act="flipx" title="水平翻转"><span class="ic" data-ic="flip_h"></span></button>
   <button data-act="flipy" title="垂直翻转"><span class="ic" data-ic="flip_v"></span></button>
   <div class="fsep"></div>
-  <button data-act="ai" title="发回 AI 修改"><span class="ic" data-ic="sparkle"></span></button>
+  
   <button data-act="del" class="danger" title="删除（Delete）"><span class="ic" data-ic="trash"></span></button>
 </div>
   <aside>
@@ -1468,18 +1468,6 @@ $('btn_save').onclick = async () => {
   }
   const blob = new Blob([JSON.stringify(P, null, 2)], { type: 'application/json' });
   download(blob, '海报项目.json');
-};
-$('btn_copy').onclick = async () => {
-  const txt = JSON.stringify(P);
-  try {
-    await navigator.clipboard.writeText(txt);
-    flash('项目数据已复制（' + Math.round(txt.length / 1024) + ' KB），直接粘到对话里发给我即可。');
-  } catch (e) {
-    $('copybox').style.display = 'block';
-    $('copybox').value = txt;
-    $('copybox').select();
-    flash('浏览器不让直接写剪贴板，已放进下面的框，Ctrl+A / Ctrl+C 复制。');
-  }
 };
 $('btn_load').onclick = () => $('file_proj').click();
 $('file_proj').onchange = e => {
