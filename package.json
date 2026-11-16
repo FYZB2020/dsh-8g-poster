@@ -1,6 +1,6 @@
 {
   "name": "poster-forge",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "PosterForge · 海报锻造坊 —— 本地生图 + 素材合成 + 二维码防错校验 + 可编辑工作台 + 印刷件输出，一套给中文商业海报用的工具链。",
   "keywords": [
     "dsh-plugin",
@@ -44,6 +44,13 @@
           "POSTER_PYTHON": "python"
         }
       }
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-sidebar",
+        "@deepseek-ai/dsh-client-ui-sidebar-right"
+      ]
     }
   },
   "engines": {
@@ -52,5 +59,10 @@
   "scripts": {
     "test": "node test/smoke.mjs && node test/route.mjs && node test/ver.mjs",
     "mcp": "node server/index.js"
+  },
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
   }
 }
