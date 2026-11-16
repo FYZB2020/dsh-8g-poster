@@ -7,10 +7,10 @@ qr.json 结构（见 examples/qr.example.json）：
   "style": {"fg": "#1B3A6B", "bg": "#FFFFFF", "size": 1600,
             "logo": "logo.png", "logo_ratio": 0.18},
   "items": [
-    {"name": "a", "label": "初中题库", "sub": "书链 · 可下载",
-     "group": "书链资源页", "url": "https://..."},
-    {"name": "b", "label": "初中题库", "sub": "ima · 可看可问",
-     "group": "ima 知识库", "source": "官方码.png", "expect": "https://..."}
+    {"name": "a", "label": "分类A题库", "sub": "可下载",
+     "group": "资源页", "url": "https://..."},
+    {"name": "b", "label": "分类A题库", "sub": "可看可问",
+     "group": "知识库", "source": "官方码.png", "expect": "https://..."}
   ],
   "sheet": {"title": "扫码直达", "cols": 4, "output": "二维码总览.png"}
 }

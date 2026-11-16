@@ -48,12 +48,9 @@ line(true, 'descriptors', `${TOOLS.length} 个工具都有 description + paramet
 
 {
   const r = await callTool('poster_templates', {})
-  let ok = false
-  try {
-    const j = JSON.parse(r.text)
-    ok = Array.isArray(j.templates) && j.templates.length >= 3
-  } catch { ok = false }
-  line(ok, 'poster_templates', '4 套版式 JSON 可解析')
+  const t = r.text || ''
+  const ok = /必须守的规则/.test(t) && /二维码最终像素/.test(t) && /两个起点/.test(t) && !/\"x\":/.test(t)
+  line(ok, 'poster_templates', '规则 + 结构起点（且不含坐标）')
 }
 
 {

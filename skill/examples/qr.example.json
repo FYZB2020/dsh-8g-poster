@@ -8,38 +8,38 @@
   },
   "items": [
     {
-      "name": "书链_初中题库",
-      "label": "初中题库",
-      "sub": "书链 · 可下载",
-      "group": "书链资源页",
+      "name": "资源页_分类A",
+      "label": "分类A题库",
+      "sub": "可下载",
+      "group": "资源页",
       "url": "https://example.com/a?token=xxx"
     },
     {
-      "name": "书链_高中题库",
-      "label": "高中题库",
-      "sub": "书链 · 可下载",
-      "group": "书链资源页",
+      "name": "资源页_分类B",
+      "label": "分类B题库",
+      "sub": "可下载",
+      "group": "资源页",
       "url": "https://example.com/b?token=xxx"
     },
     {
-      "name": "ima_初中题库",
-      "label": "初中题库",
-      "sub": "ima · 可看可问",
-      "group": "ima 知识库",
-      "source": "官方码_初中.png",
-      "expect": "https://ima.qq.com/wiki/?shareId=xxxx（可省略，省略时只验解码成功）"
+      "name": "知识库_分类A",
+      "label": "分类A题库",
+      "sub": "可看可问",
+      "group": "知识库",
+      "source": "brand-qr-a.png",
+      "expect": "https://example.com/wiki/?shareId=xxxx（可省略，省略时只验解码成功）"
     },
     {
-      "name": "ima_高中题库",
-      "label": "高中题库",
-      "sub": "ima · 可看可问",
-      "group": "ima 知识库",
-      "source": "官方码_高中.png"
+      "name": "知识库_分类B",
+      "label": "分类B题库",
+      "sub": "可看可问",
+      "group": "知识库",
+      "source": "brand-qr-b.png"
     },
     {
       "name": "公众号",
-      "label": "广东高教社",
-      "sub": "公众号 · 统一入口",
+      "label": "示例机构",
+      "sub": "资讯 · 更多内容",
       "group": "公众号",
       "url": "http://weixin.qq.com/r/mp/xxxx"
     }

@@ -16,7 +16,7 @@
       "fill": "#FBF3E6",
       "radius": 4,
       "texts": [
-        {"x": 90, "y": 671, "text": "ima 知识库 — 在线看题 · AI 抽题组卷", "size": 34, "color": "#B8281E", "font": "msyhbd.ttc", "anchor": "lm"}
+        {"x": 90, "y": 671, "text": "知识库 — 在线看题 · AI 抽题组卷", "size": 34, "color": "#B8281E", "font": "msyhbd.ttc", "anchor": "lm"}
       ]
     }
   ],
@@ -25,7 +25,7 @@
     "img_dir": "qr",
     "scale": 1.28,
     "gap_factor": 0.86,
-    "labels": ["初中题库", "高中题库", "初中题库", "高中题库", "初中电子样书", "高中电子样书", "公众号"],
+    "labels": ["分类A题库", "分类B题库", "分类A题库", "分类B题库", "分类A样书", "分类B样书", "公众号"],
     "label_size": 16,
     "label_gap": 14,
     "label_color": "#333333",
