@@ -103,3 +103,37 @@ poster-forge/
 ## 许可
 
 代码 MIT。字体见各自的 LICENSE（OFL / 系统字体）。图标由本地 FLUX 生成，随包 MIT。
+
+## 工作流（五步）
+
+插件打开（工作台首开）会先弹一屏说明，之后每一步都可以问「下一步做什么」（工具 `poster_guide` 返回完整流程）。
+
+1. **选模型** —— 先问用户这次用哪个：`flux` 还是 `moss`。
+2. **出几版** —— `poster_generate` 一次出 3 版（`variants=3`），提示词明确「不要文字、不要 logo」。
+3. **挑一版** —— 用户没选定之前不要往下走。
+4. **装进工作台** —— 用选中的那张当底图打开工作台，拖拽排版、改字贴码。
+5. **校验交付** —— `poster_qr action=verify` 逐张解码，导 2048 / 4096 / PDF。
+
+## 两个出图模型的分工
+
+| | flux（FLUX 3 Klein int8） | moss（MOSS-Image SFT int8） |
+|---|---|---|
+| 采样 | 16 步 / CFG 1.0 | 20 步 / CFG 2.5 |
+| 1024² 实测 | 40–60 秒 | **103.9 秒**（20 步） |
+| 文本编码器 | Qwen3-VL-4B(4.9GB) | **Qwen3.5-9B(6.8GB)**，中文理解更好 |
+| 画面质感 / 光影 | 强 | 中 |
+| 参考图融合 | 支持（2–10 张） | 不支持（走 flux） |
+| 版面框控 | 无 | **有**：`MOSSImageLayoutPrompt`（框内可渲染文字） |
+| 结构控制 | 无 | **有**：`MOSSImageControl` 色块 + 深度 LoRA |
+| 局部编辑 | 无 | **有**：`TextEncodeMOSSImageEdit` edit LoRA |
+
+一句话：要「画面好看」用 flux，要「版面按我说的来」用 moss。
+
+## 宿主内路由（一键交回）
+
+插件在 DSH 宿主里注册两条 exact Fetch route（`ctx.get('connection').fetch.register`）：
+
+- `GET /api/poster-forge/editor[?bg=<绝对路径>]` —— 同源打开工作台，`bg` 可把任意图当底图注入
+- `POST /api/poster-forge/apply` —— 工作台里点「✦ 发回 AI」时提交选中元素，落到 `<cwd>/.posterforge/latest.json`
+
+因为是同源页面，浏览器自身的鉴权即可通过（外部页面调这些路由会 401）。

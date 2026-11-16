@@ -50,7 +50,7 @@
                     "node":  "\u003e=18"
                 },
     "scripts":  {
-                    "test":  "node test/smoke.mjs",
+                    "test":  "node test/smoke.mjs \u0026\u0026 node test/route.mjs",
                     "mcp":  "node server/index.js"
                 }
 }
