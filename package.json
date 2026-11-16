@@ -1,56 +1,56 @@
-﻿{
-    "name":  "poster-forge",
-    "version":  "0.1.0",
-    "description":  "PosterForge · 海报锻造坊 —— 本地生图 + 素材合成 + 二维码防错校验 + 可编辑工作台 + 印刷件输出，一套给中文商业海报用的工具链。",
-    "keywords":  [
-                     "dsh-plugin",
-                     "dsh-bundle",
-                     "mcp",
-                     "poster",
-                     "design",
-                     "qr",
-                     "comfyui",
-                     "print"
-                 ],
-    "license":  "MIT",
-    "type":  "module",
-    "main":  "lib/index.js",
-    "bin":  {
-                "poster-forge-mcp":  "server/index.js"
-            },
-    "files":  [
-                  "lib",
-                  "server",
-                  "test",
-                  "assets",
-                  "python",
-                  "skill",
-                  "cordis.patch.yml",
-                  "README.md",
-                  "CHANGELOG.md",
-                  "LICENSE"
-              ],
-    "dsh":  {
-                "bundle":  {
-                               "patch":  "./cordis.patch.yml"
-                           },
-                "mcpServers":  {
-                                   "poster-forge":  {
-                                                        "command":  "node",
-                                                        "args":  [
-                                                                     "server/index.js"
-                                                                 ],
-                                                        "env":  {
-                                                                    "POSTER_PYTHON":  "python"
-                                                                }
-                                                    }
-                               }
-            },
-    "engines":  {
-                    "node":  "\u003e=18"
-                },
-    "scripts":  {
-                    "test":  "node test/smoke.mjs \u0026\u0026 node test/route.mjs",
-                    "mcp":  "node server/index.js"
-                }
+{
+  "name": "poster-forge",
+  "version": "0.2.0",
+  "description": "PosterForge · 海报锻造坊 —— 本地生图 + 素材合成 + 二维码防错校验 + 可编辑工作台 + 印刷件输出，一套给中文商业海报用的工具链。",
+  "keywords": [
+    "dsh-plugin",
+    "dsh-bundle",
+    "mcp",
+    "poster",
+    "design",
+    "qr",
+    "comfyui",
+    "print"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "main": "lib/index.js",
+  "bin": {
+    "poster-forge-mcp": "server/index.js"
+  },
+  "files": [
+    "lib",
+    "server",
+    "test",
+    "assets",
+    "python",
+    "skill",
+    "cordis.patch.yml",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "mcpServers": {
+      "poster-forge": {
+        "command": "node",
+        "args": [
+          "server/index.js"
+        ],
+        "env": {
+          "POSTER_PYTHON": "python"
+        }
+      }
+    }
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node test/smoke.mjs && node test/route.mjs && node test/ver.mjs",
+    "mcp": "node server/index.js"
+  }
 }

@@ -1450,7 +1450,22 @@ $('btn_pdf').onclick = async () => {
   download(makePdf(jpg, mm), `海报_${mm}mm.pdf`);
 };
 
-$('btn_save').onclick = () => {
+$('btn_save').onclick = async () => {
+  save();
+  // 在宿主里：顺手存一版并发回去，形成版本链
+  if (window.__POSTER_FORGE_HOST__) {
+    try {
+      const r = await fetch('/api/poster-forge/apply', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ ...P, kind: 'save' })
+      });
+      const j = await r.json();
+      if (j.ok) { flash(`已存为第 ${j.version} 版并发回宿主：${j.summary || ''}`); return; }
+      flash('保存了本地副本，但发回宿主失败：' + (j.error || '未知错误'));
+    } catch (e) {
+      flash('保存了本地副本，但连不上宿主：' + e.message);
+    }
+  }
   const blob = new Blob([JSON.stringify(P, null, 2)], { type: 'application/json' });
   download(blob, '海报项目.json');
 };

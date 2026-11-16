@@ -1,4 +1,4 @@
-﻿# PosterForge · 海报锻造坊
+# PosterForge · 海报锻造坊
 
 > 本地生图 → 素材合成 → 二维码防错校验 → 可编辑工作台 → 印刷件。
 > 一套给中文商业海报（尤其教育/出版物料）用的工具链，装进 DSH 当插件用。
@@ -137,3 +137,37 @@ poster-forge/
 - `POST /api/poster-forge/apply` —— 工作台里点「✦ 发回 AI」时提交选中元素，落到 `<cwd>/.posterforge/latest.json`
 
 因为是同源页面，浏览器自身的鉴权即可通过（外部页面调这些路由会 401）。
+
+
+## 版本链：保存就是一次「发回」
+
+不只是导出 JSON。在工作台点 **存项目** 时，如果工作台是从宿主里打开的（`/api/poster-forge/editor`），它会同时：
+
+1. 存本地副本（浏览器 localStorage，防丢）；
+2. `POST /api/poster-forge/apply {kind:'save'}`；
+3. 宿主把它写成 `.posterforge/versions/vNNNN-<时间>.json` 并覆盖 `latest.json`；
+4. 自动算 **这一版相对上一版改了什么**：哪些元素改了哪些字段、新增几个、删掉几个。
+
+所以可以连着存 20 版，然后说一句「从最新版开始改」，AI 调 `poster_versions action=latest` 就知道当前是什么样；
+`action=list` 看完整版本史，`action=diff from=3 to=7` 看两版之间到底动了什么。
+
+## MOSS 的三个强项（工具参数）
+
+`poster_generate model=moss` 支持三种控制方式：
+
+| 参数 | 作用 | 实测 |
+|---|---|---|
+| `layout`（JSON 文件） | 版面框控：给若干带 bbox 的元素，模型在框里生成内容；type=text 的元素会把文字直接渲染进图 | 通过，中文标题一次成 |
+| `colorMap` / `depthMap` | 色块 / 深度控制：按分区色块图与深度图构图 | 通过，分区遵循但会自发加字 |
+| `editRef` | 局部编辑（edit LoRA） | 实验：当前 500，待修 |
+
+框控元素格式（坐标 0-1000，y 在前）：
+
+```json
+{"elements": [
+  {"type": "text", "text": "数字教学资源", "bbox": [60, 50, 190, 520]},
+  {"type": "object", "desc": "golden lion head", "bbox": [40, 540, 520, 980], "color_palette": ["#f0c040"]}
+]}
+```
+
+注意：框里除 text 之外的小字仍是模型自编（假字），二维码也是画的假码 —— 文字与二维码以工作台后期压的为准。
