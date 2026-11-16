@@ -1,0 +1,9 @@
+Pillow>=9.0
+numpy>=1.21
+opencv-python-headless>=4.8
+reportlab>=3.6
+
+# 二维码模块（recolor_qr 只需 zxing-cpp；make_qr / qr_batch 两个都要）
+# 不做二维码任务时可不装
+qrcode>=7.4
+zxing-cpp>=2.0

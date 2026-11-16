@@ -1,0 +1,62 @@
+{
+  "note": "四套版式的坐标都按画布边长 S 的比例书写；换尺寸只需改 S。文案与数字集中在 copy 里，换 JSON 即出新海报。",
+  "templates": [
+    {
+      "id": "cover",
+      "name": "封面风",
+      "script": "poster/compose_cover.py",
+      "canvas": "1:1",
+      "palette": { "paper": "#FDFBF7", "red": "#C0272D", "gold": "#B48A4F", "green": "#2E6B4E", "ink": "#1E1C1A" },
+      "bestFor": "教辅/教材配套物料、需要庄重且带一点年味的场合",
+      "copy": {
+        "kicker": "2026 秋季 · 广东高等教育出版社",
+        "title1": "广东初高中",
+        "title2": "数字教学资源",
+        "lead": "电子样书 · 真题题库 · ima 知识库",
+        "stats": [
+          { "num": "439", "unit": "本", "name": "电子样书", "note": "初中 180 · 高中 259" },
+          { "num": "约 1470", "unit": "套", "name": "真题题库", "note": "近 5 年中高考原卷" },
+          { "num": "9+9", "unit": "科", "name": "初高中全覆盖", "note": "每年 3 月、9 月更新" }
+        ],
+        "notice": "《金版学案》系列教辅（电子样书）经广东省中小学教辅材料评议委员会评议通过（2026 年）"
+      },
+      "qr": { "count": 7, "minSize": 0.115, "layout": "初中朱红 / 高中墨绿 双行 + 公众号" }
+    },
+    {
+      "id": "navy",
+      "name": "深蓝书堆",
+      "script": "poster/compose.py",
+      "canvas": "1:1",
+      "palette": { "navy": "#0A2240", "gold": "#E8C88A", "mint": "#96D6B4" },
+      "bestFor": "学术、稳重的机构物料；AI 生成背景 + 三层信息",
+      "copy": { "title": "数字教学资源", "lead": "电子样书 · 题库 · ima 知识库" },
+      "qr": { "count": 3, "minSize": 0.115, "layout": "底部扫码带" }
+    },
+    {
+      "id": "lion",
+      "name": "暖金醒狮",
+      "script": "poster/compose_lion.py",
+      "canvas": "1:1",
+      "palette": { "crimson": "#340E0A", "gold": "#F4CE8E", "green": "#2E6B4E" },
+      "bestFor": "招生、节庆、需要岭南识别度的场合",
+      "copy": { "title": "数字教学资源", "lead": "电子样书 · 真题题库 · ima 知识库" },
+      "qr": { "count": 7, "minSize": 0.115, "layout": "左三右一 + 初中/高中双行" }
+    },
+    {
+      "id": "geo",
+      "name": "极简几何",
+      "script": "poster/compose_on_bg.py",
+      "canvas": "1:1",
+      "palette": { "navy": "#0B1630", "mint": "#CFE6DA", "gold": "#D9B87C" },
+      "bestFor": "B 端、科技调性、需要克制留白的场合",
+      "copy": { "title": "数字教学资源", "lead": "电子样书 · 真题题库 · ima 知识库" },
+      "qr": { "count": 7, "minSize": 0.115, "layout": "全幅码带" }
+    }
+  ],
+  "hardRules": [
+    "二维码最终像素必须 ≥ 0.115 × 画布边长；这批点点码 + 中心 logo 在 235px 时会解不出，242px 才稳。",
+    "扫码区必须逐张解码校验（poster_qr action=verify），不能只看图。",
+    "评议口径只覆盖「《金版学案》系列教辅（电子样书）」；资源库与 ima 知识库不在评议范围，顶部和页脚都要写。",
+    "可商用字体标注清楚授权；系统字体（雅黑/宋体/黑体/华文中宋）需自行确认商用授权。"
+  ]
+}

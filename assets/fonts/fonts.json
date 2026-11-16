@@ -1,0 +1,167 @@
+[
+ {
+  "id": "smiley",
+  "name": "得意黑 Smiley Sans",
+  "file": "SmileySans-Oblique.ttf",
+  "family": "PosterForge Smiley",
+  "license": "SIL OFL 1.1（可商用）",
+  "bundled": true,
+  "scenes": [
+   "海报主标题",
+   "促销/活动",
+   "短视频封面",
+   "招新"
+  ],
+  "mood": [
+   "活泼",
+   "年轻",
+   "斜切",
+   "有冲劲"
+  ],
+  "sizeRange": "40–160px",
+  "note": "只有一档倾斜字形；大字号才有味道，14px 以下别用。唯一随包附带的字体。"
+ },
+ {
+  "id": "zhongsong",
+  "name": "华文中宋 STZhongsong",
+  "file": "C:/Windows/Fonts/STZHONGS.TTF",
+  "family": "STZhongsong",
+  "license": "系统字体（Windows 随附，商用需自行确认授权）",
+  "bundled": false,
+  "scenes": [
+   "教辅/教材封面",
+   "公文",
+   "文化类标题",
+   "庄重场合"
+  ],
+  "mood": [
+   "庄重",
+   "传统",
+   "权威",
+   "书卷"
+  ],
+  "sizeRange": "36–120px",
+  "note": "教育出版最稳的主标题；单字重，别假粗，别用来排长文。"
+ },
+ {
+  "id": "noto_serif",
+  "name": "思源宋体 Noto Serif SC",
+  "file": "C:/Windows/Fonts/NotoSerifSC-VF.ttf",
+  "family": "Noto Serif SC",
+  "license": "SIL OFL 1.1（可商用）",
+  "bundled": false,
+  "scenes": [
+   "书籍正文",
+   "长文",
+   "文化标题",
+   "引文"
+  ],
+  "mood": [
+   "书卷",
+   "稳重",
+   "细腻"
+  ],
+  "sizeRange": "11–90px",
+  "note": "可变字重；正文到标题都能顶，比系统宋体耐看。"
+ },
+ {
+  "id": "noto_sans",
+  "name": "思源黑体 Noto Sans SC",
+  "file": "C:/Windows/Fonts/NotoSansSC-VF.ttf",
+  "family": "Noto Sans SC",
+  "license": "SIL OFL 1.1（可商用）",
+  "bundled": false,
+  "scenes": [
+   "正文",
+   "界面",
+   "双语",
+   "数据说明"
+  ],
+  "mood": [
+   "中性",
+   "现代",
+   "干净"
+  ],
+  "sizeRange": "10–72px",
+  "note": "最不容易出错的正文字；和数字/英文混排时不跳。"
+ },
+ {
+  "id": "yahei",
+  "name": "微软雅黑 Microsoft YaHei",
+  "file": "C:/Windows/Fonts/msyh.ttc",
+  "family": "Microsoft YaHei",
+  "license": "系统字体（Windows 随附）",
+  "bundled": false,
+  "scenes": [
+   "正文",
+   "说明文",
+   "表格",
+   "按钮"
+  ],
+  "mood": [
+   "通用",
+   "屏幕友好"
+  ],
+  "sizeRange": "10–64px",
+  "note": "屏幕阅读默认选项；印刷时略虚，重要物料建议换思源黑体。"
+ },
+ {
+  "id": "yahei_b",
+  "name": "微软雅黑 Bold",
+  "file": "C:/Windows/Fonts/msyhbd.ttc",
+  "family": "Microsoft YaHei",
+  "license": "系统字体（Windows 随附）",
+  "bundled": false,
+  "scenes": [
+   "小标题",
+   "强调",
+   "按钮",
+   "价格/数字"
+  ],
+  "mood": [
+   "醒目",
+   "硬朗"
+  ],
+  "sizeRange": "12–72px",
+  "note": "真正字重，不是假粗；数字块（439 / 1470）用它最稳。"
+ },
+ {
+  "id": "heiti",
+  "name": "黑体 SimHei",
+  "file": "C:/Windows/Fonts/simhei.ttf",
+  "family": "SimHei",
+  "license": "系统字体（Windows 随附）",
+  "bundled": false,
+  "scenes": [
+   "强对比标题",
+   "老式公告"
+  ],
+  "mood": [
+   "硬",
+   "老派",
+   "直接"
+  ],
+  "sizeRange": "20–96px",
+  "note": "笔画粗、性格强；做对比制造视觉冲击时用，正文别用。"
+ },
+ {
+  "id": "songti",
+  "name": "宋体 SimSun",
+  "file": "C:/Windows/Fonts/simsun.ttc",
+  "family": "SimSun",
+  "license": "系统字体（Windows 随附）",
+  "bundled": false,
+  "scenes": [
+   "印刷感正文",
+   "引文",
+   "仿古"
+  ],
+  "mood": [
+   "传统",
+   "细",
+   "朴素"
+  ],
+  "sizeRange": "10–48px",
+  "note": "小字号印刷味最正；放大到标题会显单薄。"
+ }
+]

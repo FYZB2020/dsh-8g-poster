@@ -1,0 +1,53 @@
+{
+  "style": {
+    "fg": "#1B3A6B",
+    "bg": "#FFFFFF",
+    "size": 1600,
+    "logo": "logo.png",
+    "logo_ratio": 0.18
+  },
+  "items": [
+    {
+      "name": "书链_初中题库",
+      "label": "初中题库",
+      "sub": "书链 · 可下载",
+      "group": "书链资源页",
+      "url": "https://example.com/a?token=xxx"
+    },
+    {
+      "name": "书链_高中题库",
+      "label": "高中题库",
+      "sub": "书链 · 可下载",
+      "group": "书链资源页",
+      "url": "https://example.com/b?token=xxx"
+    },
+    {
+      "name": "ima_初中题库",
+      "label": "初中题库",
+      "sub": "ima · 可看可问",
+      "group": "ima 知识库",
+      "source": "官方码_初中.png",
+      "expect": "https://ima.qq.com/wiki/?shareId=xxxx（可省略，省略时只验解码成功）"
+    },
+    {
+      "name": "ima_高中题库",
+      "label": "高中题库",
+      "sub": "ima · 可看可问",
+      "group": "ima 知识库",
+      "source": "官方码_高中.png"
+    },
+    {
+      "name": "公众号",
+      "label": "广东高教社",
+      "sub": "公众号 · 统一入口",
+      "group": "公众号",
+      "url": "http://weixin.qq.com/r/mp/xxxx"
+    }
+  ],
+  "sheet": {
+    "title": "扫码直达 · 长按识别",
+    "cols": 3,
+    "output": "二维码总览.png",
+    "bg": "#FBFAF6"
+  }
+}
