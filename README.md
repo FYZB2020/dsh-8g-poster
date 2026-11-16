@@ -26,12 +26,18 @@ PosterForge 把这条链收成一个插件，并且把「印前必过的检查�
 
 ## 安装
 
-```bash
-# 1) 放进 DSH 的 profile
-cp -r poster-forge  ~/.dsh/profiles/<your-profile>/node_modules/
+### 方式 A：当 DSH 插件装（推荐，工具直接进对话的工具表）
 
-# 2) 在 profile 的 settings 里注册 MCP
+```bash
+# 在 DSH 里用插件管理器装本地目录，或：
+cd <你的 profile 目录>            # 例：~/.dsh/profiles/desktop
+pnpm add "file:<绝对路径>/poster-forge"
 ```
+
+再把它加进 `package.json` 的 `dsh.profile.bundles`，**重启 DSH** 生效。
+入口是 `lib/index.js`（cordis 插件，`inject: ['tools']`），`cordis.patch.yml` 负责插入。
+
+### 方式 B：当 MCP 服务器装（任何 MCP 客户端都能用）
 
 ```json
 {
@@ -45,7 +51,10 @@ cp -r poster-forge  ~/.dsh/profiles/<your-profile>/node_modules/
 }
 ```
 
-`POSTER_PYTHON` 指向装了 `Pillow / numpy / qrcode / opencv-python` 的解释器（见 `skill/requirements.txt`）。
+两种方式共用 `lib/core.js` 的同一份实现，行为一致。
+
+`POSTER_PYTHON` 指向装了 `Pillow / numpy / qrcode / opencv-python / zxing-cpp` 的解释器（见 `skill/requirements.txt`）。
+没设则依次回退到 `PYTHON`、`python`。
 
 ## 工具
 
