@@ -24,15 +24,15 @@
   "license": "MIT",
   "author": {
     "name": "FYZB2020",
-    "url": "https://github.com/sinenter2026"
+    "url": "https://github.com/FYZB2020"
   },
-  "homepage": "https://github.com/sinenter2026/dsh-posterwright#readme",
+  "homepage": "https://github.com/FYZB2020/dsh-posterwright#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sinenter2026/dsh-posterwright.git"
+    "url": "git+https://github.com/FYZB2020/dsh-posterwright.git"
   },
   "bugs": {
-    "url": "https://github.com/sinenter2026/dsh-posterwright/issues"
+    "url": "https://github.com/FYZB2020/dsh-posterwright/issues"
   },
   "type": "module",
   "main": "lib/index.js",
