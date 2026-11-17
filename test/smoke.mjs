@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// PosterForge 自检：不需要 ComfyUI、不需要外部素材，跑完就知道插件是否装对了。
+// Posterwright 自检：不需要 ComfyUI、不需要外部素材，跑完就知道插件是否装对了。
 //   node test/smoke.mjs
 // 退出码 0 = 全部通过。
 import fs from 'node:fs'
@@ -20,7 +20,7 @@ function has(text, needle) {
   return String(text || '').includes(needle)
 }
 
-console.log('PosterForge 自检')
+console.log('Posterwright 自检')
 console.log('root  :', ROOT)
 console.log('tools :', TOOLS.length)
 console.log('tmp   :', tmp)

@@ -17,13 +17,13 @@ import urllib.parse
 import urllib.request
 import uuid
 
-UNET = "flux3-image-klein-int8-convrot.safetensors"
-CLIP = "qwen3vl_4b_int8_convrot.safetensors"
-VAE = "flux2-vae.safetensors"
+UNET = os.environ.get("POSTER_UNET", "flux3-image-klein-int8-convrot.safetensors")
+CLIP = os.environ.get("POSTER_CLIP", "qwen3vl_4b_int8_convrot.safetensors")
+VAE = os.environ.get("POSTER_VAE", "flux2-vae.safetensors")
 ALPHA = 16.0
 MU = round(math.log(ALPHA), 5)
 
-HOST = "http://127.0.0.1:8189"
+HOST = os.environ.get("POSTER_COMFY", "http://127.0.0.1:8189")
 
 
 def build_graph(prompt, neg, refs, w, h, seed, steps, cfg, sampler, scheduler, prefix, megapixels):

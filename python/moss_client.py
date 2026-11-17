@@ -19,13 +19,13 @@ import urllib.error
 import urllib.request
 import uuid
 
-HOST = "http://127.0.0.1:8189"
+HOST = os.environ.get("POSTER_COMFY", "http://127.0.0.1:8189")
 
-UNET = "moss_image_sft_int8_convrot.safetensors"
-CLIP = "qwen3.5_9b_w4a8_gptq.safetensors"
-VAE = "flux2-vae.safetensors"
-CTRL_LORA = "moss_image_color_depth_control.safetensors"
-EDIT_LORA = "moss_image_edit_lora_rank_64_bf16.safetensors"
+UNET = os.environ.get("POSTER_MOSS_UNET", "moss_image_sft_int8_convrot.safetensors")
+CLIP = os.environ.get("POSTER_MOSS_CLIP", "qwen3.5_9b_w4a8_gptq.safetensors")
+VAE = os.environ.get("POSTER_VAE", "flux2-vae.safetensors")
+CTRL_LORA = os.environ.get("POSTER_MOSS_CTRL_LORA", "moss_image_color_depth_control.safetensors")
+EDIT_LORA = os.environ.get("POSTER_MOSS_EDIT_LORA", "moss_image_edit_lora_rank_64_bf16.safetensors")
 ALPHA = 16.0
 MU = round(math.log(ALPHA), 5)
 

@@ -1,8 +1,8 @@
 # 一条命令推到 GitHub
 #   用法：
-#     .\publish.ps1 -Repo "https://github.com/<你>/poster-forge.git" -Token "ghp_xxx"
+#     .\publish.ps1 -Repo "https://github.com/<你>/posterwright.git" -Token "ghp_xxx"
 #   也可以先把 token 放进环境变量 $env:GITHUB_TOKEN，再：
-#     .\publish.ps1 -Repo "https://github.com/<你>/poster-forge.git"
+#     .\publish.ps1 -Repo "https://github.com/<你>/posterwright.git"
 #
 # 只做三件事：检查 → 设 remote → push。不 force、不删东西。
 

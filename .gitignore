@@ -1,5 +1,23 @@
-﻿dist/
+node_modules/
+dist/
+*.tgz
 *.zip
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+.env
+.env.*
+*.key
+*.pem
+__pycache__/
+*.pyc
+
+# 工作台/版本链的本地数据，跟着作品文件夹走，不进仓库
+.posterwright/
+.posterforge/
+
+# 个人自用页面：只留工作台与打开说明
 assets/editor/*.html
 !assets/editor/poster-editor.html
 !assets/editor/poster-open.html
