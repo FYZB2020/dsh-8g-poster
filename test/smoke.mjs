@@ -24,6 +24,15 @@ console.log('PosterForge 自检')
 console.log('root  :', ROOT)
 console.log('tools :', TOOLS.length)
 console.log('tmp   :', tmp)
+
+{
+  const s = await callTool('poster_workspace', { action: 'status' })
+  const l = await callTool('poster_workspace', { action: 'list' })
+  const bad = has(s.text, 'is not defined') || has(l.text, 'is not defined')
+  const ok = !bad && (has(s.text, '作品文件夹') || has(s.text, '未设定') || has(s.text, '尚未'))
+  line(ok, 'poster_workspace status/list', bad ? '运行时报错（缺 import？）' : '不崩、给出可读结果')
+}
+
 console.log('')
 
 for (const t of TOOLS) {
