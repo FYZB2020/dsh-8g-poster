@@ -287,7 +287,8 @@ aside h2, #empty b { color:#6b7f96; }
     <li><span>平移画布（放大后用它拖）</span><b>空格+拖动</b></li>
     <li><span>视图回到 100% 适配</span><b>双击空白</b></li>
     <li><span>上移 / 下移一层（长按连续）</span><b>【 】</b></li>
-    <li><span>微调位置（长按加速）</span><b>方向键</b></li>
+    <li><span>拖四角等比 / 拖边中点只改宽高</span><b>鼠标</b></li>
+      <li><span>微调位置（长按加速）</span><b>方向键</b></li>
     <li><span>大幅微调</span><b>Shift+方向键</b></li>
     <li><span>全选</span><b>Ctrl+A</b></li>
     <li><span>取消选择 / 退出裁剪</span><b>Esc</b></li>
@@ -323,7 +324,8 @@ aside h2, #empty b { color:#6b7f96; }
       <b>没选中元素。</b><br>
       单击选中；<b>Shift 拖空白处</b>框选一片；<br>
       <b>Ctrl 单击</b>逐个加减选择；组合后当一个整体拖。<br>
-      Delete 删除，Ctrl+D 复制，方向键微调。<br><br>
+      Delete 删除，Ctrl+D 复制，方向键微调。<br>
+      <b>拖四角</b>＝等比缩放；<b>拖四边的中点</b>＝只改宽或只改高（文字拖左边改折行、拖上下改字号）。<br><br>
       <b>对齐吸附：</b>拖动时靠上别人的边或画布中线会出红线，<br>
       <span style="color:#e8352e">实线</span>＝已对齐吸住，<span style="color:#c98b88">虚线</span>＝快对齐了。<br><br>
       <b>锁定</b>（Ctrl+L）之后还能选、能框选，但不会被拖走、删掉、改样子。<br><br>
@@ -594,6 +596,18 @@ function corners(el) {
   return pts.map(([x, y]) => [cx + x * Math.cos(r) - y * Math.sin(r), cy + x * Math.sin(r) + y * Math.cos(r)]);
 }
 
+// 四条边的中点（做「只拉宽 / 只拉高」用，像 PPT 的边中点手柄）
+function edgePts(el) {
+  const cx = el.x + el.w / 2, cy = el.y + el.h / 2, r = (el.rot || 0) * Math.PI / 180;
+  const raw = { n: [0, -el.h / 2], s: [0, el.h / 2], w: [-el.w / 2, 0], e: [el.w / 2, 0] };
+  const out = {};
+  for (const k in raw) {
+    const x = raw[k][0], y = raw[k][1];
+    out[k] = [cx + x * Math.cos(r) - y * Math.sin(r), cy + x * Math.sin(r) + y * Math.cos(r)];
+  }
+  return out;
+}
+
 function bboxOf(els) {
   let x1 = Infinity, y1 = Infinity, x2 = -Infinity, y2 = -Infinity;
   els.forEach(el => {
@@ -742,6 +756,11 @@ function drawOverlay() {
     cs.forEach(([x, y]) => {
       ctx.beginPath(); ctx.arc(x, y, hs / 2, 0, 7); ctx.fill(); ctx.stroke();
     });
+    // 四条边中点的小手柄（比角上的略小，暗示「只拉这个方向」）
+    const ep = edgePts(el);
+    ['n', 'e', 's', 'w'].forEach(k => {
+      ctx.beginPath(); ctx.arc(ep[k][0], ep[k][1], hs * 0.40, 0, 7); ctx.fill(); ctx.stroke();
+    });
 
     const cx = el.x + el.w / 2, cy = el.y + el.h / 2, r = (el.rot || 0) * Math.PI / 180;
     const rx = cx + Math.sin(r) * (-el.h / 2 - 40 * k), ry = cy - Math.cos(r) * (el.h / 2 + 40 * k);
@@ -791,6 +810,9 @@ function hitHandle(el, px, py) {
   const cs = corners(el);
   const names = ['nw', 'ne', 'se', 'sw'];
   for (let i = 0; i < 4; i++) if (Math.hypot(px - cs[i][0], py - cs[i][1]) < tol) return names[i];
+  // 边中点：只拉宽 / 只拉高
+  const ep = edgePts(el);
+  for (const k of ['n', 'e', 's', 'w']) if (Math.hypot(px - ep[k][0], py - ep[k][1]) < tol * 0.82) return k;
   return null;
 }
 
@@ -855,7 +877,7 @@ cv.addEventListener('pointerdown', ev => {
       const h = hitHandle(cur, px, py);
       if (h) {
         snapshot();
-        if (CROP && CROP.id === cur.id && h !== 'rot') {
+        if (CROP && CROP.id === cur.id && (h === 'nw' || h === 'ne' || h === 'se' || h === 'sw')) {
           drag = { mode: 'crop', corner: h, px0: px, py0: py, start: [clone(cur)], ids: [cur.id], box: bboxOf([cur]) };
           return;
         }
@@ -906,7 +928,12 @@ cv.addEventListener('pointermove', ev => {
 
   if (!drag) {
     const cur = SEL.length === 1 ? byId(SEL[0]) : null;
-    cv.style.cursor = cur && !cur.locked && hitHandle(cur, px, py) ? 'nwse-resize' : (hitTest(px, py) ? 'move' : 'default');
+    const hh = cur && !cur.locked ? hitHandle(cur, px, py) : null;
+    const cmap = {
+      n: 'ns-resize', s: 'ns-resize', e: 'ew-resize', w: 'ew-resize',
+      nw: 'nwse-resize', se: 'nwse-resize', ne: 'nesw-resize', sw: 'nesw-resize', rot: 'grab'
+    };
+    cv.style.cursor = hh ? (cmap[hh] || 'default') : (hitTest(px, py) ? 'move' : 'default');
     const h = hitTest(px, py);
     const id = h ? h.id : null;
     if (id !== HOVER) { HOVER = id; render(); }
@@ -973,22 +1000,28 @@ cv.addEventListener('pointermove', ev => {
     return;
   }
 
-  // 缩放
+  // 缩放（角=等比/自由；边中点=只改一个方向）
   const b = drag.box;
-  const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
-  const anchorX = (drag.mode === 'nw' || drag.mode === 'sw') ? b.x + b.w : b.x;
-  const anchorY = (drag.mode === 'nw' || drag.mode === 'ne') ? b.y + b.h : b.y;
-  let nw = Math.max(16, Math.abs(px - anchorX));
-  let nh = Math.max(12, Math.abs(py - anchorY));
-  let sx = nw / Math.max(1, b.w), sy = nh / Math.max(1, b.h);
-  if (ev.shiftKey) { const s = Math.max(sx, sy); sx = sy = s; }
-  const nx = Math.min(anchorX, anchorX + (px - anchorX));
-  elsStep(drag, sx, sy, (drag.mode === 'nw' || drag.mode === 'sw') ? b.x + b.w - b.w * sx : b.x,
-    (drag.mode === 'nw' || drag.mode === 'ne') ? b.y + b.h - b.h * sy : b.y);
+  const m = drag.mode;
+  const onlyX = (m === 'e' || m === 'w');
+  const onlyY = (m === 'n' || m === 's');
+  const left = (m === 'nw' || m === 'sw' || m === 'w');
+  const top = (m === 'nw' || m === 'ne' || m === 'n');
+  const anchorX = left ? b.x + b.w : b.x;
+  const anchorY = top ? b.y + b.h : b.y;
+  let sx = Math.max(16, Math.abs(px - anchorX)) / Math.max(1, b.w);
+  let sy = Math.max(12, Math.abs(py - anchorY)) / Math.max(1, b.h);
+  if (onlyX) sy = 1;
+  if (onlyY) sx = 1;
+  if (ev.shiftKey && !onlyX && !onlyY) { const s = Math.max(sx, sy); sx = sy = s; }
+  elsStep(drag, sx, sy,
+    left ? b.x + b.w - b.w * sx : b.x,
+    top ? b.y + b.h - b.h * sy : b.y,
+    onlyX ? 'x' : onlyY ? 'y' : 'both');
   render(); syncInspector();
 });
 
-function elsStep(drag, sx, sy, gx, gy) {
+function elsStep(drag, sx, sy, gx, gy, axis) {
   drag.ids.forEach((id, i) => {
     const el = byId(id), st = drag.start[i];
     const relx = st.x - drag.box.x, rely = st.y - drag.box.y;
@@ -997,22 +1030,37 @@ function elsStep(drag, sx, sy, gx, gy) {
     el.w = Math.max(4, Math.round(st.w * sx));
     el.h = Math.max(4, Math.round(st.h * sy));
     if (el.type === 'text') {
-      const sf = (sx + sy) / 2;
-      el.size = Math.max(6, Math.round(st.size * sf));
-      el.fixedW = true;
-      el.w = Math.max(4, Math.round(st.w * sf));
-      el.h = Math.max(4, Math.round(st.h * sf));
+      if (axis === 'x') {
+        // 只拉宽：改换行宽度，字号不动
+        el.fixedW = true;
+        el.w = Math.max(4, Math.round(st.w * sx));
+        el.h = st.h;
+      } else if (axis === 'y') {
+        // 只拉高：按字号缩放（文字高度本来就跟字号走）
+        el.size = Math.max(6, Math.round(st.size * sy));
+        el.fixedW = st.fixedW;
+        el.w = st.w;
+      } else {
+        const sf = (sx + sy) / 2;
+        el.size = Math.max(6, Math.round(st.size * sf));
+        el.fixedW = true;
+        el.w = Math.max(4, Math.round(st.w * sf));
+        el.h = Math.max(4, Math.round(st.h * sf));
+      }
     }
-    if (el.type === 'group') scaleGroup(el, st, sx, sy);
+    if (el.type === 'group') scaleGroup(el, st, sx, sy, axis);
   });
 }
 
-function scaleGroup(el, st, sx, sy) {
+function scaleGroup(el, st, sx, sy, axis) {
   (el.children || []).forEach((ch, i) => {
     const s0 = st.children[i];
     ch.x = s0.x * sx; ch.y = s0.y * sy;
     ch.w = s0.w * sx; ch.h = s0.h * sy;
-    if (ch.type === 'text') ch.size = Math.max(6, Math.round(s0.size * (sx + sy) / 2));
+    if (ch.type === 'text') {
+      const f = axis === 'x' ? 1 : axis === 'y' ? sy : (sx + sy) / 2;
+      ch.size = Math.max(6, Math.round(s0.size * f));
+    }
   });
 }
 
