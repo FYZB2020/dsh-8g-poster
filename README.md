@@ -12,10 +12,11 @@ Local AI backgrounds · cut-out assembly · QR verification · editable workbenc
 
 ![Poster8G output](assets/showcase/posters.webp)
 
-Five posters, one pipeline. The three on the left are 東方Project fan pieces (generated, cut out, laid out,
-exported to print). The two on the right are a playing-card product launch: red-lacquer gift box shot on white,
-cut to a transparent PNG, composed over an AI-generated background, with the spec strip, the selling points and
-the compliance line all placed as *editable layers* — not baked into the picture.
+Six posters, one pipeline. The three on the left are 東方Project fan pieces (generated, cut out, laid out,
+exported to print). The three on the right are one playing-card product launch, rendered as three different
+treatments: a screen-print art version, a felt-table scene, and a clean white e-commerce layout. The red-lacquer
+gift box was shot on white, cut to a transparent PNG and composed over an AI-generated background, with the spec
+strip, the selling points and the compliance line all placed as *editable layers* — not baked into the picture.
 
 ---
 
