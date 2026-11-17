@@ -1,0 +1,22 @@
+# 本机个人文件，绝不随包发布
+*_入口*.html
+*_入口*.htm
+.PROMPT*
+PROMPT-*.md
+
+# 编辑器/版本链运行期目录
+.posterwright/
+.posterforge/
+
+# 测试夹具与临时产物
+test/fixtures/
+test/_tmp/
+*.log
+*.tmp
+*.bak
+
+# 依赖与构建产物（files 白名单之外的兜底）
+node_modules/
+dist/
+*.tgz
+*.zip
