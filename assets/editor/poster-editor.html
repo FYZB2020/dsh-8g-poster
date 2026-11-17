@@ -240,6 +240,10 @@ aside h2, #empty b { color:#6b7f96; }
     <input id="i_ch" title="画布高 px" style="width:62px;padding:4px 6px;border:1px solid #d7e3f2;border-radius:7px;text-align:center">
     <button id="btn_canvas" title="应用画布尺寸（元素位置不变，可再按 Ctrl+E 居中）">应用</button>
     <button class="ghost" id="btn_canvas_fit" title="改尺寸时把元素按比例缩放">等比缩放</button>
+    <span style="opacity:.35">|</span>
+    <button class="ghost" id="btn_zoomout" title="缩小（Ctrl+滚轮下滚同效）" style="min-width:30px;font-size:15px;line-height:1">−</button>
+    <button class="ghost" id="btn_zoomreset" title="回到 100% 适配视图" style="min-width:58px"><span id="v_zoom">100%</span></button>
+    <button class="ghost" id="btn_zoomin" title="放大（Ctrl+滚轮上滚同效）" style="min-width:30px;font-size:15px;line-height:1">+</button>
   </div>
 
   <input type="file" id="file_proj" accept=".json,application/json">
@@ -289,7 +293,9 @@ aside h2, #empty b { color:#6b7f96; }
       Delete 删除，Ctrl+D 复制，方向键微调。<br><br>
       <b>对齐吸附：</b>拖动时靠上别人的边或画布中线会出红线，<br>
       <span style="color:#e8352e">实线</span>＝已对齐吸住，<span style="color:#c98b88">虚线</span>＝快对齐了。<br><br>
-      <b>锁定</b>（Ctrl+L）之后还能选、能框选，但不会被拖走、删掉、改样子。
+      <b>锁定</b>（Ctrl+L）之后还能选、能框选，但不会被拖走、删掉、改样子。<br><br>
+      <b>缩放画布：</b>按住 <b>Ctrl</b> 上下滚滚轮（往上放大、往下缩小），<br>
+      或按工具栏「画布」组里的 <b>−</b> / <b>100%</b> / <b>+</b>。只缩作品，界面不跟着放大。
     </div>
 
     <div id="insp" style="display:none">
@@ -386,7 +392,7 @@ const LIB = window.__FONTS__ || [];
 LIB.forEach(f => { if (f.id && f.css) FONTS[f.id] = f.css; });
 
 let P = null, SEL = [], drag = null, undoStack = [], redoStack = [], guides = [], marquee = null;
-let CROP = null, toastTimer = null, HOVER = null;
+let CROP = null, toastTimer = null, HOVER = null, ZOOM = 1;
 const cache = {};
 const cv = document.getElementById('stage');
 const ctx = cv.getContext('2d');
@@ -1597,12 +1603,38 @@ $('btn_ab').onclick = () => alignSel('bottom');
 $('btn_dh').onclick = () => distributeSel('x');
 $('btn_dv').onclick = () => distributeSel('y');
 $('btn_selall').onclick = () => { SEL = P.elements.filter(e => !e.hidden).map(e => e.id); render(); syncInspector(); };
-$('btn_fit').onclick = () => {
+$('btn_fit').onclick = () => { ZOOM = 1; applyView(); };
+
+/* ---------- 视图缩放（Ctrl+滚轮 / 按钮），只缩放作品，不缩放界面 ---------- */
+function applyView() {
   const w = $('stagewrap').clientWidth, h = window.innerHeight - 96;
-  const k = Math.min((w - 48) / S(), h / SH());
-  cv.style.width = Math.max(280, Math.round(S() * k)) + 'px';
-  cv.style.height = Math.max(280, Math.round(SH() * k)) + 'px';
-};
+  const base = Math.min((w - 48) / S(), h / SH());
+  const k = base * ZOOM;
+  cv.style.width = Math.max(120, Math.round(S() * k)) + 'px';
+  cv.style.height = Math.max(120, Math.round(SH() * k)) + 'px';
+  const z = $('v_zoom');
+  if (z) z.textContent = Math.round(ZOOM * 100) + '%';
+}
+function zoomBy(f, cx, cy) {
+  const before = cv.getBoundingClientRect();
+  const pxc = (cx == null) ? before.width / 2 : cx - before.left;
+  const pyc = (cy == null) ? before.height / 2 : cy - before.top;
+  ZOOM = Math.min(6, Math.max(0.15, ZOOM * f));
+  applyView();
+  const after = cv.getBoundingClientRect();
+  const r = after.width / before.width;
+  window.scrollBy((pxc * r) - pxc, (pyc * r) - pyc);
+  placeFtb();
+}
+$('btn_zoomin').onclick = () => zoomBy(1.2);
+$('btn_zoomout').onclick = () => zoomBy(1 / 1.2);
+$('btn_zoomreset').onclick = () => { ZOOM = 1; applyView(); placeFtb(); };
+window.addEventListener('wheel', e => {
+  if (!(e.ctrlKey || e.metaKey)) return;
+  e.preventDefault();                       // 挡掉浏览器整页缩放（工具栏被放大就是这么来的）
+  if (!e.target || !e.target.closest || !e.target.closest('#stagewrap')) return;
+  zoomBy(e.deltaY < 0 ? 1.12 : 1 / 1.12, e.clientX, e.clientY);
+}, { passive: false });
 
 /* ---------- 画布尺寸（不再写死正方形） ---------- */
 function scaleAll(k) {
@@ -1816,8 +1848,8 @@ function boot() {
   try { syncCanvasInputs(); } catch (e) {}
   hydrateIcons();
   render(); syncInspector();
-  $('btn_fit').click();
-  window.addEventListener('resize', () => { $('btn_fit').click(); placeFtb(); });
+  applyView();
+  window.addEventListener('resize', () => { applyView(); placeFtb(); });
   const ftb = $('ftb');
   if (ftb) ftb.addEventListener('click', e => {
     const btn = e.target.closest('[data-act]');
