@@ -222,6 +222,25 @@ aside h2, #empty b { color:#6b7f96; }
     <button class="ghost" id="btn_fit">适配</button>
   </div>
 
+  <div class="grp"><span class="gl">画布</span>
+    <select id="i_ratio" title="画幅预设" style="padding:4px 6px;border:1px solid #d7e3f2;border-radius:7px;background:#fff;color:#16283c;font:12px -apple-system,Segoe UI,Microsoft YaHei">
+      <option value="1080x1080">1:1 方图</option>
+      <option value="1080x1350">4:5 小红书</option>
+      <option value="1080x1440">3:4 竖版</option>
+      <option value="1080x1920">9:16 手机海报</option>
+      <option value="1920x1080">16:9 横版</option>
+      <option value="2480x3508">A4 竖版 300dpi</option>
+      <option value="3508x2480">A4 横版 300dpi</option>
+      <option value="3508x4961">A3 竖版 300dpi</option>
+      <option value="custom">自定义…</option>
+    </select>
+    <input id="i_cw" title="画布宽 px" style="width:62px;padding:4px 6px;border:1px solid #d7e3f2;border-radius:7px;text-align:center">
+    <span style="opacity:.6;font-size:12px">×</span>
+    <input id="i_ch" title="画布高 px" style="width:62px;padding:4px 6px;border:1px solid #d7e3f2;border-radius:7px;text-align:center">
+    <button id="btn_canvas" title="应用画布尺寸（元素位置不变，可再按 Ctrl+E 居中）">应用</button>
+    <button class="ghost" id="btn_canvas_fit" title="改尺寸时把元素按比例缩放">等比缩放</button>
+  </div>
+
   <input type="file" id="file_proj" accept=".json,application/json">
   <input type="file" id="file_img" accept="image/*">
 </header>
@@ -374,7 +393,8 @@ const ctx = cv.getContext('2d');
 /* ---------- 工具 ---------- */
 function clone(o) { return JSON.parse(JSON.stringify(o)); }
 function uid() { return 'e' + Math.random().toString(36).slice(2, 8); }
-function S() { return P.size; }
+function S() { return P.w || P.size || 1080; }
+function SH() { return P.h || P.size || 1080; }
 function byId(id) { return P.elements.find(e => e.id === id); }
 function selEls() { return SEL.map(byId).filter(Boolean); }
 function unlocked() { return selEls().filter(e => !e.locked); }
@@ -505,12 +525,17 @@ function drawEl(c, el) {
 }
 
 function render() {
-  const s = S();
-  cv.width = s; cv.height = s;
-  ctx.clearRect(0, 0, s, s);
+  const w = S(), h = SH();
+  if (cv.width !== w) cv.width = w;
+  if (cv.height !== h) cv.height = h;
+  ctx.clearRect(0, 0, w, h);
   const bg = img(P.bg);
-  if (bg.complete && bg.naturalWidth) ctx.drawImage(bg, 0, 0, s, s);
-  else { ctx.fillStyle = '#faf6ee'; ctx.fillRect(0, 0, s, s); }
+  // 底图按“铺满画布”绘制，换比例也不会留白边
+  if (bg.complete && bg.naturalWidth) {
+    const k = Math.max(w / bg.naturalWidth, h / bg.naturalHeight);
+    const dw = bg.naturalWidth * k, dh = bg.naturalHeight * k;
+    ctx.drawImage(bg, (w - dw) / 2, (h - dh) / 2, dw, dh);
+  } else { ctx.fillStyle = '#faf6ee'; ctx.fillRect(0, 0, w, h); }
   for (const el of P.elements) drawEl(ctx, el);
   drawOverlay();
   placeFtb();
@@ -561,7 +586,7 @@ function drawOverlay() {
       ctx.strokeStyle = g.solid ? 'rgba(232,53,46,0.95)' : 'rgba(232,53,46,0.55)';
       ctx.lineWidth = (g.solid ? 2.2 : 1.6) * k;
       ctx.setLineDash(g.solid ? [] : [12 * k, 10 * k]);
-      if (g.axis === 'x') { ctx.moveTo(g.pos, 0); ctx.lineTo(g.pos, S()); }
+      if (g.axis === 'x') { ctx.moveTo(g.pos, 0); ctx.lineTo(g.pos, SH()); }
       else { ctx.moveTo(0, g.pos); ctx.lineTo(S(), g.pos); }
       ctx.stroke();
     });
@@ -704,7 +729,7 @@ function bracket(x, y, w, h, l, color, lw) {
 /* ---------- 命中 ---------- */
 function toStage(ev) {
   const r = cv.getBoundingClientRect();
-  return [((ev.clientX - r.left) / r.width) * S(), ((ev.clientY - r.top) / r.height) * S()];
+  return [((ev.clientX - r.left) / r.width) * S(), ((ev.clientY - r.top) / r.height) * SH()];
 }
 
 function localPoint(el, px, py) {
@@ -749,7 +774,7 @@ function snapBox(box, others) {
   const me = edgesOf(box);
   const sx = [], hx = [], sy = [], hy = [];
   const pool = others.map(o => (o.rot ? bboxOf([o]) : o)).filter(o => !o.hidden);
-  pool.push({ x: 0, y: 0, w: S(), h: S() });
+  pool.push({ x: 0, y: 0, w: S(), h: SH() });
   for (const o of pool) {
     const oe = edgesOf(o);
     for (const a of me.x) for (const b of oe.x) {
@@ -1074,7 +1099,7 @@ function sendToAI() {
   if (!els.length) { toast('先选中元素'); return; }
   const brief = {
     task: '改这个元素的这些字段，其余别动；返回同样结构，我按 id 覆盖回编辑器。',
-    canvas: S(),
+    canvas: { w: S(), h: SH() },
     elements: els.map(e => ({
       id: e.id, name: e.name || e.type, type: e.type,
       x: e.x, y: e.y, w: e.w, h: e.h, rot: e.rot || 0,
@@ -1112,8 +1137,8 @@ function centerSel() {
   const els = unlocked();
   if (!els.length) return;
   snapshot();
-  const s = S();
-  els.forEach(e => { e.x = Math.round((s - e.w) / 2); e.y = Math.round((s - e.h) / 2); });
+  const w = S(), h = SH();
+  els.forEach(e => { e.x = Math.round((w - e.w) / 2); e.y = Math.round((h - e.h) / 2); });
   render(); syncInspector();
   toast('已居中到画布（' + els.length + ' 个）');
 }
@@ -1240,7 +1265,7 @@ function alignSel(mode) {
   const moving = all.filter(e => !e.locked);
   if (!moving.length) return;
   const ref = all.length === 1
-    ? { x: 0, y: 0, w: S(), h: S() }
+    ? { x: 0, y: 0, w: S(), h: SH() }
     : bboxOf(all);
   snapshot();
   moving.forEach(e => {
@@ -1420,13 +1445,16 @@ $('i_fill').addEventListener('input', e => applyToSel(el => { if (el.type === 'r
 
 /* ---------- 导出 ---------- */
 function renderTo(scale) {
-  const s = S(), c = document.createElement('canvas');
-  c.width = s * scale; c.height = s * scale;
+  const w = S(), h = SH(), c = document.createElement('canvas');
+  c.width = Math.round(w * scale); c.height = Math.round(h * scale);
   const g = c.getContext('2d');
   g.scale(scale, scale);
   const bg = img(P.bg);
-  if (bg.complete && bg.naturalWidth) g.drawImage(bg, 0, 0, s, s);
-  else { g.fillStyle = '#faf6ee'; g.fillRect(0, 0, s, s); }
+  if (bg.complete && bg.naturalWidth) {
+    const k = Math.max(w / bg.naturalWidth, h / bg.naturalHeight);
+    const dw = bg.naturalWidth * k, dh = bg.naturalHeight * k;
+    g.drawImage(bg, (w - dw) / 2, (h - dh) / 2, dw, dh);
+  } else { g.fillStyle = '#faf6ee'; g.fillRect(0, 0, w, h); }
   const flat = JSON.parse(JSON.stringify(P.elements));
   flat.forEach(el => drawEl(g, el));
   return c;
@@ -1446,7 +1474,7 @@ function toJpeg(canvas, q) {
 
 /* 手写单页 PDF：一张 JPEG 铺满页面 */
 function makePdf(jpeg, mm) {
-  const pt = mm / 25.4 * 72;
+  const ptW = mm / 25.4 * 72, ptH = ptW * (SH() / S());
   const enc = new TextEncoder();
   const parts = []; let len = 0;
   const push = data => { const u8 = typeof data === 'string' ? enc.encode(data) : data; parts.push(u8); len += u8.length; };
@@ -1455,13 +1483,13 @@ function makePdf(jpeg, mm) {
   const obj = (n, body) => { offsets[n] = len; push(`${n} 0 obj\n`); push(body); push('\nendobj\n'); };
   obj(1, '<< /Type /Catalog /Pages 2 0 R >>');
   obj(2, '<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
-  obj(3, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pt.toFixed(2)} ${pt.toFixed(2)}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>`);
+  obj(3, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${ptW.toFixed(2)} ${ptH.toFixed(2)}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>`);
   offsets[4] = len;
   push('4 0 obj\n');
   push(`<< /Type /XObject /Subtype /Image /Width ${jpeg.__w} /Height ${jpeg.__h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpeg.length} >>\nstream\n`);
   push(jpeg);
   push('\nendstream\nendobj\n');
-  const content = `q ${pt.toFixed(2)} 0 0 ${pt.toFixed(2)} 0 0 cm /Im0 Do Q`;
+  const content = `q ${ptW.toFixed(2)} 0 0 ${ptH.toFixed(2)} 0 0 cm /Im0 Do Q`;
   obj(5, `<< /Length ${content.length} >>\nstream\n${content}\nendstream`);
   const xref = len;
   let x = `xref\n0 6\n0000000000 65535 f \n`;
@@ -1565,8 +1593,48 @@ $('btn_dv').onclick = () => distributeSel('y');
 $('btn_selall').onclick = () => { SEL = P.elements.filter(e => !e.hidden).map(e => e.id); render(); syncInspector(); };
 $('btn_fit').onclick = () => {
   const w = $('stagewrap').clientWidth, h = window.innerHeight - 96;
-  cv.style.width = Math.max(320, Math.min(w - 48, h)) + 'px';
+  const k = Math.min((w - 48) / S(), h / SH());
+  cv.style.width = Math.max(280, Math.round(S() * k)) + 'px';
+  cv.style.height = Math.max(280, Math.round(SH() * k)) + 'px';
 };
+
+/* ---------- 画布尺寸（不再写死正方形） ---------- */
+function scaleAll(k) {
+  const walk = list => list.forEach(e => {
+    e.x *= k; e.y *= k; e.w *= k; e.h *= k;
+    if (e.size) e.size = Math.max(6, e.size * k);
+    if (e.children) walk(e.children);
+  });
+  walk(P.elements);
+}
+function setCanvas(w, h, doScale) {
+  w = Math.round(w); h = Math.round(h);
+  if (!(w >= 200 && h >= 200 && w <= 8000 && h <= 8000)) { alert('宽高要在 200–8000 之间'); return; }
+  const ow = S(), oh = SH();
+  if (w === ow && h === oh) { toast('已经是 ' + w + '×' + h + ' 了'); return; }
+  snapshot();
+  if (doScale) scaleAll(Math.min(w / ow, h / oh));
+  P.w = w; P.h = h; delete P.size;
+  $('i_cw').value = w; $('i_ch').value = h;
+  render(); syncInspector(); save(); $('btn_fit').click();
+  toast('画布改为 ' + w + '×' + h + (doScale ? '（元素已等比缩放）' : ''));
+}
+function syncCanvasInputs() {
+  if ($('i_cw')) $('i_cw').value = S();
+  if ($('i_ch')) $('i_ch').value = SH();
+  if ($('i_ratio')) {
+    const k = S() + 'x' + SH(), o = [...$('i_ratio').options].find(x => x.value === k);
+    if (o) $('i_ratio').value = k;
+  }
+}
+$('i_ratio').onchange = () => {
+  const v = $('i_ratio').value;
+  if (v === 'custom') { $('i_cw').focus(); return; }
+  const parts = v.split('x').map(Number);
+  $('i_cw').value = parts[0]; $('i_ch').value = parts[1];
+};
+$('btn_canvas').onclick = () => setCanvas(+$('i_cw').value, +$('i_ch').value, false);
+$('btn_canvas_fit').onclick = () => setCanvas(+$('i_cw').value, +$('i_ch').value, true);
 
 let flashTimer = null;
 function flash(msg) {
@@ -1728,6 +1796,7 @@ function boot() {
   const restored = load();
   if (!restored) { P = BLANK(); showStart(true); }
   hydrateFonts();
+  try { syncCanvasInputs(); } catch (e) {}
   hydrateIcons();
   render(); syncInspector();
   $('btn_fit').click();
