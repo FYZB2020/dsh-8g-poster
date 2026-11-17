@@ -1,6 +1,6 @@
 {
   "name": "poster-forge",
-  "version": "0.4.9",
+  "version": "0.5.0",
   "description": "PosterForge · 海报锻造坊 —— 本地生图 + 素材合成 + 二维码防错校验 + 可编辑工作台 + 印刷件输出，一套给中文商业海报用的工具链。",
   "keywords": [
     "dsh-plugin",
@@ -28,7 +28,8 @@
     "cordis.patch.yml",
     "README.md",
     "CHANGELOG.md",
-    "LICENSE"
+    "LICENSE",
+    "PROMPT-新会话.md"
   ],
   "dsh": {
     "bundle": {
