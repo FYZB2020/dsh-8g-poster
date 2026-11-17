@@ -22,7 +22,7 @@ const check = (ok, name, note) => {
   if (!ok) bad++
 }
 
-check(tools.length === 12, 'tools 数量', String(tools.length))
+check(tools.length === 13, 'tools 数量', String(tools.length))
 check(routes.size === 0, '宿主路由已停用', `routes=${routes.size}`)
 
 const { callTool } = await import('../lib/core.js')
