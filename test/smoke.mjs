@@ -43,7 +43,9 @@ line(true, 'descriptors', `${TOOLS.length} 个工具都有 description + paramet
 {
   const r = await callTool('poster_editor', {})
   const f = path.join(ROOT, 'assets', 'editor', 'poster-editor.html')
-  line(fs.existsSync(f) && has(r.text, 'poster-editor.html'), 'poster_editor', fs.existsSync(f) ? `本地文件 + ${(fs.statSync(f).size / 1048576).toFixed(1)}MB` : '文件缺失')
+  const lf = path.join(ROOT, 'assets', 'editor', 'poster-open.html')
+  line(fs.existsSync(f) && has(r.text, 'poster-open.html') && fs.existsSync(lf), 'poster_editor',
+    fs.existsSync(f) ? `launcher + ${(fs.statSync(f).size / 1048576).toFixed(1)}MB` : '文件缺失')
 }
 
 {

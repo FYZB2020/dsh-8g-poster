@@ -1,0 +1,11 @@
+<!doctype html><meta charset="utf-8"><title>PosterForge · 海报工作台</title>
+<style>body{margin:0;font:14px/1.7 -apple-system,Segoe UI,Microsoft YaHei;background:#f4f9ff;color:#16283c;display:flex;align-items:center;justify-content:center;height:100vh}div{text-align:center}</style>
+<div>正在打开工作台…<br><span style="color:#5b7391;font-size:12px">如果 2 秒后没跳转，点这里：<a href="poster-editor.html">打开</a></span></div>
+<script>
+var D = {"seed":null,"projects":[{"name":"测试项目-招生","at":1794917905081.4724,"P":{"w":1080,"h":1350,"elements":[{"id":"t1","name":"主标题 1","type":"text","text":"测试预装","x":120,"y":160,"w":560,"h":110,"rot":0,"opacity":1,"size":72,"font":"sans","color":"#c0272d","align":"left","weight":700},{"id":"r1","name":"色块","type":"rect","x":120,"y":320,"w":360,"h":12,"rot":0,"opacity":1,"fill":"#b48a4f"}]}}]};
+try {
+  if (D.seed) { localStorage.setItem("pf.seed", JSON.stringify(D.seed)); localStorage.setItem("jbxa_poster", JSON.stringify(D.seed)); localStorage.setItem("pf.demo", JSON.stringify(D.seed)); }
+  localStorage.setItem("pf.projects", JSON.stringify(D.projects || []));
+} catch (e) {}
+location.replace("poster-editor.html");
+</script>

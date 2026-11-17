@@ -150,6 +150,7 @@ aside h2, #empty b { color:#6b7f96; }
 </style>
 </head>
 <body>
+<script>window.__PF_STORE__="pf.demo";</script>
 <header>
   <h1>PosterForge · <span>海报工作台</span></h1>
 
@@ -393,6 +394,11 @@ const ctx = cv.getContext('2d');
 /* ---------- 工具 ---------- */
 function clone(o) { return JSON.parse(JSON.stringify(o)); }
 function uid() { return 'e' + Math.random().toString(36).slice(2, 8); }
+const STORE = (typeof window !== 'undefined' && window.__PF_STORE__) || 'jbxa_poster';
+function readJSON(k) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+const SEEDED = (typeof window !== 'undefined' && Array.isArray(window.__PF_PROJECTS__)) ? window.__PF_PROJECTS__
+  : (Array.isArray(readJSON('pf.projects')) ? readJSON('pf.projects') : []);
+
 function S() { return P.w || P.size || 1080; }
 function SH() { return P.h || P.size || 1080; }
 function byId(id) { return P.elements.find(e => e.id === id); }
@@ -425,10 +431,10 @@ function redo() {
   undoStack.push(JSON.stringify(P));
   P = JSON.parse(redoStack.pop()); SEL = []; render(); syncInspector();
 }
-function save() { try { localStorage.setItem('jbxa_poster', JSON.stringify(P)); } catch (e) { } }
+function save() { try { localStorage.setItem(STORE, JSON.stringify(P)); } catch (e) { } }
 function load() {
   try {
-    const s = localStorage.getItem('jbxa_poster');
+    const s = localStorage.getItem(STORE);
     if (s) { P = JSON.parse(s); return true; }
   } catch (e) { }
   return false;
@@ -1730,7 +1736,7 @@ function ftbAct(a) {
 /* ---------- 启动 ---------- */
 
 /* ---------- 项目库（本机 localStorage，不用翻文件夹） ---------- */
-const LS_LIB = 'pf.library';
+const LS_LIB = STORE + '.library';
 const BLANK = () => ({ w: 1080, h: 1080, elements: [] });
 function libs() {
   try { return JSON.parse(localStorage.getItem(LS_LIB) || '[]'); } catch (e) { return []; }
@@ -1750,8 +1756,11 @@ function libAdd() {
   libRender();
   toast('已存进项目库');
 }
+function libAll() {
+  return libs().concat(SEEDED.map((s, i) => ({ id: 'seed:' + i, name: s.name, at: s.at || 0, P: s.P, seeded: true })));
+}
 function libLoad(id) {
-  const it = libs().find(x => x.id === id);
+  const it = libAll().find(x => x.id === id);
   if (!it) return;
   snapshot(); P = JSON.parse(JSON.stringify(it.P)); SEL = []; render(); syncInspector();
   $('libbox').style.display = 'none';
@@ -1765,7 +1774,7 @@ function libDel(id) {
 function libRender() {
   const box = $('lib_list');
   if (!box) return;
-  const a = libs();
+  const a = libAll();
   if (!a.length) { box.innerHTML = '<div style="color:#6b7d92">还是空的。改完点右上角「把当前存进项目库」。</div>'; return; }
   box.innerHTML = '';
   a.forEach(it => {
@@ -1794,7 +1803,15 @@ function newBlank() {
 
 function boot() {
   const restored = load();
-  if (!restored) { P = BLANK(); showStart(true); }
+  if (!restored) {
+    const sd = window.__PF_SEED__ || readJSON('pf.seed');
+    if (sd) { P = clone(sd); SEL = []; render(); syncInspector(); save(); showStart(false); flash('已打开预装项目'); try { localStorage.removeItem('pf.seed'); } catch (e) { } }
+    else { P = BLANK(); showStart(true); }
+  }
+  try {
+    const n = SEEDED.length, b = $('st_seed');
+    if (b && n) { b.style.display = 'block'; const c = $('st_seed_n'); if (c) c.textContent = n; }
+  } catch (e) { }
   hydrateFonts();
   try { syncCanvasInputs(); } catch (e) {}
   hydrateIcons();
@@ -1849,6 +1866,7 @@ if (document.readyState === 'loading') {
       <button id="st_new" style="padding:12px;border:1px solid #d7e3f2;background:#f7fbff;border-radius:10px;cursor:pointer;font:600 14px -apple-system,Segoe UI,Microsoft YaHei;color:#16283c">新建空白画布（1080×1080）</button>
       <button id="st_sample" style="padding:12px;border:1px solid #d7e3f2;background:#f7fbff;border-radius:10px;cursor:pointer;font:600 14px -apple-system,Segoe UI,Microsoft YaHei;color:#16283c">载入示例版式（含 7 个占位码）</button>
       <button id="st_open" style="padding:12px;border:1px solid #d7e3f2;background:#f7fbff;border-radius:10px;cursor:pointer;font:600 14px -apple-system,Segoe UI,Microsoft YaHei;color:#16283c">打开项目文件（.json）</button>
+      <button id="st_seed" style="display:none;padding:12px;border:1px solid #b4756f;background:#fff4f3;border-radius:10px;cursor:pointer;font:600 14px -apple-system,Segoe UI,Microsoft YaHei;color:#7d1f18">从作品文件夹挑（<span id="st_seed_n">0</span> 个）</button>
       <button id="st_lib" style="padding:12px;border:1px solid #d7e3f2;background:#f7fbff;border-radius:10px;cursor:pointer;font:600 14px -apple-system,Segoe UI,Microsoft YaHei;color:#16283c">从项目库打开</button>
     </div>
   </div>
