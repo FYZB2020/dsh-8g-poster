@@ -1,2 +1,7 @@
 ﻿dist/
 *.zip
+assets/editor/*.html
+!assets/editor/poster-editor.html
+!assets/editor/poster-open.html
+assets/editor/*_入口.html
+assets/editor/*_入口*.html
