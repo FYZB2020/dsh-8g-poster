@@ -214,6 +214,8 @@ aside h2, #empty b { color:#6b7f96; }
 
   <div class="grp"><span class="gl">项目</span>
     <button id="btn_save" title="存项目（JSON）"><span class="ic" data-ic="save"></span></button>
+        <button id="btn_lib" title="项目库（存在本机，不用翻文件夹）"><span class="ic" data-ic="layers"></span></button>
+        <button id="btn_new" title="新建空白"><span class="ic" data-ic="block"></span></button>
 
     <button id="btn_load">打开项目</button>
     <button class="ghost" id="btn_reset">还原</button>
@@ -1658,8 +1660,73 @@ function ftbAct(a) {
 }
 
 /* ---------- 启动 ---------- */
+
+/* ---------- 项目库（本机 localStorage，不用翻文件夹） ---------- */
+const LS_LIB = 'pf.library';
+const BLANK = () => ({ w: 1080, h: 1080, elements: [] });
+function libs() {
+  try { return JSON.parse(localStorage.getItem(LS_LIB) || '[]'); } catch (e) { return []; }
+}
+function setLibs(a) { try { localStorage.setItem(LS_LIB, JSON.stringify(a)); } catch (e) { } }
+function libLabel(name, P0) {
+  const t = (P0.elements || []).find(e => e.type === 'text' && e.text);
+  return name || (t ? String(t.text).slice(0, 14) : '未命名');
+}
+function libAdd() {
+  const name = prompt('给这一版起个名字（留空就用画布上的标题）', libLabel('', P));
+  if (name === null) return;
+  const a = libs();
+  const id = 'p' + Date.now();
+  a.unshift({ id, name: libLabel(name, P), at: Date.now(), P: JSON.parse(JSON.stringify(P)) });
+  setLibs(a.slice(0, 40));
+  libRender();
+  toast('已存进项目库');
+}
+function libLoad(id) {
+  const it = libs().find(x => x.id === id);
+  if (!it) return;
+  snapshot(); P = JSON.parse(JSON.stringify(it.P)); SEL = []; render(); syncInspector();
+  $('libbox').style.display = 'none';
+  toast('已打开：' + it.name);
+}
+function libDel(id) {
+  if (!confirm('从项目库删掉这一版？不影响已导出的文件。')) return;
+  setLibs(libs().filter(x => x.id !== id));
+  libRender();
+}
+function libRender() {
+  const box = $('lib_list');
+  if (!box) return;
+  const a = libs();
+  if (!a.length) { box.innerHTML = '<div style="color:#6b7d92">还是空的。改完点右上角「把当前存进项目库」。</div>'; return; }
+  box.innerHTML = '';
+  a.forEach(it => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #e3ecf7;border-radius:10px;background:#fbfdff';
+    const d = new Date(it.at);
+    row.innerHTML = '<div style="flex:1;min-width:0">' +
+      '<div style="font-weight:600;color:#16283c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + it.name + '</div>' +
+      '<div style="color:#7d8fa3;font-size:12px">' + d.toLocaleString() + ' · ' + (it.P.elements || []).length + ' 个元素</div></div>';
+    const b1 = document.createElement('button');
+    b1.textContent = '打开';
+    b1.style.cssText = 'padding:6px 12px;border:0;border-radius:7px;background:#c0272d;color:#fff;cursor:pointer;font:600 12px -apple-system';
+    b1.onclick = () => libLoad(it.id);
+    const b2 = document.createElement('button');
+    b2.textContent = '删除';
+    b2.style.cssText = 'padding:6px 10px;border:1px solid #e0d3c6;border-radius:7px;background:#fff;cursor:pointer;font:12px -apple-system;color:#8a6d5a';
+    b2.onclick = () => libDel(it.id);
+    row.appendChild(b1); row.appendChild(b2);
+    box.appendChild(row);
+  });
+}
+function showStart(v) { const el = $('start'); if (el) el.style.display = v ? 'flex' : 'none'; }
+function newBlank() {
+  snapshot(); P = BLANK(); SEL = []; render(); syncInspector(); save(); showStart(false);
+}
+
 function boot() {
-  if (!load()) P = clone(INIT);
+  const restored = load();
+  if (!restored) { P = BLANK(); showStart(true); }
   hydrateFonts();
   hydrateIcons();
   render(); syncInspector();
@@ -1675,9 +1742,22 @@ function boot() {
     if (el) el.onclick = () => { flipSel(i === 0 ? 'x' : 'y'); placeFtb(); };
   });
   window.addEventListener('scroll', placeFtb, true);
+  const on = (id, fn) => { const e = $(id); if (e) e.onclick = fn; };
+  on('btn_lib', () => { libRender(); $('libbox').style.display = 'flex'; });
+  on('lib_close', () => { $('libbox').style.display = 'none'; });
+  on('lib_add', libAdd);
+  on('btn_new', newBlank);
+  on('st_new', newBlank);
+  on('st_sample', () => { snapshot(); P = clone(INIT); SEL = []; render(); syncInspector(); save(); showStart(false); });
+  on('st_open', () => { showStart(false); $('btn_open').click(); });
+  on('st_lib', () => { showStart(false); libRender(); $('libbox').style.display = 'flex'; });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => render());
 }
-boot();
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
+}
 </script>
 <script>
 (function () {
@@ -1691,5 +1771,31 @@ boot();
   obs.observe(document.body, { childList: false, subtree: false });
 })();
 </script>
+
+<div id="start" style="position:fixed;inset:0;z-index:9998;display:none;align-items:center;justify-content:center;background:rgba(20,28,38,.45)">
+  <div style="width:520px;background:#fff;border-radius:16px;padding:26px 28px;box-shadow:0 18px 60px rgba(20,40,70,.25);font:14px/1.7 -apple-system,Segoe UI,Microsoft YaHei">
+    <div style="font:600 19px/1.4 -apple-system,Segoe UI,Microsoft YaHei;color:#16283c;margin-bottom:6px">PosterForge · 海报工作台</div>
+    <div style="color:#6b7d92;margin-bottom:18px">从这里开始。以后每次打开都会接着上次，不用再找文件夹。</div>
+    <div style="display:grid;gap:9px">
+      <button id="st_new" style="padding:12px;border:1px solid #d7e3f2;background:#f7fbff;border-radius:10px;cursor:pointer;font:600 14px -apple-system,Segoe UI,Microsoft YaHei;color:#16283c">新建空白画布（1080×1080）</button>
+      <button id="st_sample" style="padding:12px;border:1px solid #d7e3f2;background:#f7fbff;border-radius:10px;cursor:pointer;font:600 14px -apple-system,Segoe UI,Microsoft YaHei;color:#16283c">载入示例版式（含 7 个占位码）</button>
+      <button id="st_open" style="padding:12px;border:1px solid #d7e3f2;background:#f7fbff;border-radius:10px;cursor:pointer;font:600 14px -apple-system,Segoe UI,Microsoft YaHei;color:#16283c">打开项目文件（.json）</button>
+      <button id="st_lib" style="padding:12px;border:1px solid #d7e3f2;background:#f7fbff;border-radius:10px;cursor:pointer;font:600 14px -apple-system,Segoe UI,Microsoft YaHei;color:#16283c">从项目库打开</button>
+    </div>
+  </div>
+</div>
+
+<div id="libbox" style="position:fixed;inset:0;z-index:9998;display:none;align-items:center;justify-content:center;background:rgba(20,28,38,.45)">
+  <div style="width:640px;max-height:76vh;overflow:auto;background:#fff;border-radius:16px;padding:22px 24px;box-shadow:0 18px 60px rgba(20,40,70,.25);font:14px/1.6 -apple-system,Segoe UI,Microsoft YaHei">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div style="font:600 17px -apple-system,Segoe UI,Microsoft YaHei;color:#16283c">项目库</div>
+      <div>
+        <button id="lib_add" style="padding:7px 12px;border:0;border-radius:8px;background:#c0272d;color:#fff;cursor:pointer;font:600 13px -apple-system,Segoe UI,Microsoft YaHei">把当前存进项目库</button>
+        <button id="lib_close" style="margin-left:8px;padding:7px 12px;border:1px solid #d7e3f2;border-radius:8px;background:#fff;cursor:pointer;font:13px -apple-system,Segoe UI,Microsoft YaHei">关闭</button>
+      </div>
+    </div>
+    <div id="lib_list" style="display:grid;gap:8px"></div>
+  </div>
+</div>
 </body>
 </html>
