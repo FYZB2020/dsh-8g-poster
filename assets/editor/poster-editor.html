@@ -41,13 +41,24 @@
   }
   button:hover { background: #313843; border-color: #4a5361; }
   button:active { transform: translateY(1px); }
+  /* ── 防「雷霆蓝竖条」：焦点环、滚动条、文字选中高亮全部换成浅色细线 ── */
+  *:focus, *:focus-visible { outline: none !important; }
+  header, aside, #keys, #ftb, #start, #libbox { user-select: none; -webkit-user-select: none; }
+  ::selection { background: rgba(192,138,62,.26); color: inherit; }
+  #stagewrap { scrollbar-width: thin; scrollbar-color: #cddff2 transparent; }
+  #stagewrap::-webkit-scrollbar { width: 10px; height: 10px; }
+  #stagewrap::-webkit-scrollbar-thumb { background: #cddff2; border-radius: 6px; }
+  #stagewrap::-webkit-scrollbar-thumb:hover { background: #b9d2ec; }
+  #stagewrap::-webkit-scrollbar-track, #stagewrap::-webkit-scrollbar-corner { background: transparent; }
+  body.panning #stagewrap, body.panning #stagewrap canvas { cursor: grab !important; }
+  body.grabbing #stagewrap, body.grabbing #stagewrap canvas { cursor: grabbing !important; }
   button.primary { background: #c0272d; border-color: #d43a40; }
   button.primary:hover { background: #d43a40; }
   button.ghost { background: transparent; }
   .sep { width: 1px; height: 22px; background: #2f353f; margin: 0 3px; }
   main { flex: 1; display: flex; min-height: 0; }
   #stagewrap {
-    flex: 1; display: flex; align-items: center; justify-content: center;
+    flex: 1; display: block; overflow: auto; padding: 20px 0;
     background:
       linear-gradient(45deg, #191c22 25%, transparent 25%) -12px 0/24px 24px,
       linear-gradient(-45deg, #191c22 25%, transparent 25%) -12px 0/24px 24px,
@@ -57,6 +68,8 @@
     overflow: auto; padding: 18px;
   }
   canvas { display: block; max-width: 100%; height: auto; box-shadow: 0 12px 40px rgba(0,0,0,.55); touch-action: none; }
+  /* 工作台画布：允许超出可视区（放大后滚动/空格拖动看），并水平居中 */
+  #stage { max-width: none; height: auto; margin: 0 auto; }
 
   /* ── 元素浮动工具条 */
   #ftb {
@@ -1623,7 +1636,9 @@ function zoomBy(f, cx, cy) {
   applyView();
   const after = cv.getBoundingClientRect();
   const r = after.width / before.width;
-  window.scrollBy((pxc * r) - pxc, (pyc * r) - pyc);
+  const sw = $('stagewrap');
+  sw.scrollLeft += (pxc * r) - pxc;
+  sw.scrollTop += (pyc * r) - pyc;
   placeFtb();
 }
 $('btn_zoomin').onclick = () => zoomBy(1.2);
@@ -1635,6 +1650,51 @@ window.addEventListener('wheel', e => {
   if (!e.target || !e.target.closest || !e.target.closest('#stagewrap')) return;
   zoomBy(e.deltaY < 0 ? 1.12 : 1 / 1.12, e.clientX, e.clientY);
 }, { passive: false });
+
+/* ---------- 空格 + 拖动 = 平移画布；双击空白 = 回 100% ---------- */
+let SPACE = false, PAN = null;
+function isTyping(t) {
+  return t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
+}
+window.addEventListener('keydown', e => {
+  if (e.code !== 'Space' || isTyping(e.target)) return;
+  if (!SPACE) { SPACE = true; document.body.classList.add('panning'); }
+  e.preventDefault();
+});
+window.addEventListener('keyup', e => {
+  if (e.code !== 'Space') return;
+  SPACE = false; document.body.classList.remove('panning');
+});
+window.addEventListener('blur', () => { SPACE = false; document.body.classList.remove('panning'); });
+
+const paneWrap = $('stagewrap');
+paneWrap.addEventListener('pointerdown', ev => {
+  if (!SPACE) return;
+  ev.preventDefault(); ev.stopPropagation();
+  PAN = { x: ev.clientX, y: ev.clientY, sx: paneWrap.scrollLeft, sy: paneWrap.scrollTop };
+  document.body.classList.add('grabbing');
+  paneWrap.setPointerCapture(ev.pointerId);
+}, true);
+paneWrap.addEventListener('pointermove', ev => {
+  if (!PAN) return;
+  ev.preventDefault(); ev.stopPropagation();
+  paneWrap.scrollLeft = PAN.sx - (ev.clientX - PAN.x);
+  paneWrap.scrollTop = PAN.sy - (ev.clientY - PAN.y);
+}, true);
+paneWrap.addEventListener('pointerup', ev => {
+  if (!PAN) return;
+  PAN = null;
+  document.body.classList.remove('grabbing');
+  ev.stopPropagation();
+}, true);
+
+cv.addEventListener('dblclick', ev => {
+  if (SPACE) return;
+  const [px, py] = toStage(ev);
+  if (hitTest(px, py)) return;               // 点在元素上不处理，留给以后双击编辑
+  ZOOM = 1; applyView(); placeFtb();
+  if (typeof toast === 'function') toast('视图回到 100%');
+});
 
 /* ---------- 画布尺寸（不再写死正方形） ---------- */
 function scaleAll(k) {
