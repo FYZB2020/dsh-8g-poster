@@ -1,6 +1,6 @@
 <div align="center">
 
-# Posterwright · 海报匠
+# Poster8G · 8G 海报
 
 **The poster workshop that runs on your own 8 GB GPU.**
 
@@ -10,7 +10,7 @@ Local AI backgrounds · cut-out assembly · QR verification · editable workbenc
 
 </div>
 
-![Posterwright output](assets/showcase/posters.webp)
+![Poster8G output](assets/showcase/posters.webp)
 
 Five posters, one pipeline. The three on the left are 東方Project fan pieces (generated, cut out, laid out,
 exported to print). The two on the right are a playing-card product launch: red-lacquer gift box shot on white,
@@ -51,7 +51,7 @@ re-open and edit next Tuesday.
 
 ```bash
 # 1. the plugin
-dsh plugin add dsh-posterwright        # or: npm i -g dsh-posterwright
+dsh plugin add dsh-8g-poster        # or: npm i -g dsh-8g-poster
 
 # 2. python side (Pillow, numpy, opencv, reportlab, qrcode, zxing-cpp)
 python -m pip install -r skill/requirements.txt
@@ -83,7 +83,7 @@ Two entry points, one implementation: a DSH plugin (`lib/index.js`) and an MCP s
 ## A typical session
 
 ```
-you:  用海报匠做一张掼蛋扑克牌的海报，产品图我已经抠好了
+you:  用8G 海报做一张掼蛋扑克牌的海报，产品图我已经抠好了
 agent: poster_guide → poster_workspace(status) → 问路线
 you:  flux
 agent: poster_generate ×3  →  三版无字背景

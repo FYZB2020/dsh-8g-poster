@@ -1,10 +1,10 @@
 // 版本链测试：作品文件夹保存 → 快照 → poster_versions list/latest/diff → poster_check
-// 全部在临时目录里跑：先把「家目录」指到 tmp，避免污染真实 ~/.posterwright/workspace.json
+// 全部在临时目录里跑：先把「家目录」指到 tmp，避免污染真实 ~/.poster8g/workspace.json
 import os from 'node:os'
 import fs from 'node:fs'
 import path from 'node:path'
 
-const HOME = path.join(os.tmpdir(), 'posterwright-test-home')
+const HOME = path.join(os.tmpdir(), 'poster8g-test-home')
 fs.rmSync(HOME, { recursive: true, force: true })
 fs.mkdirSync(HOME, { recursive: true })
 process.env.USERPROFILE = HOME
@@ -12,7 +12,7 @@ process.env.HOME = HOME
 
 const { callTool } = await import('../lib/core.js')
 
-const WS = path.join(os.tmpdir(), 'posterwright-test-ws')
+const WS = path.join(os.tmpdir(), 'poster8g-test-ws')
 fs.rmSync(WS, { recursive: true, force: true })
 fs.mkdirSync(WS, { recursive: true })
 
@@ -46,7 +46,7 @@ const f1 = write('p1.json', proj('旧标题', 100))
 const s1 = await callTool('poster_workspace', { action: 'save', file: f1, name: '测试项目' })
 ok(/版本链：v1/.test(s1.text), '第一次保存生成 v1', s1.text)
 ok(fs.existsSync(path.join(WS, '测试项目.json')), '项目 JSON 落在作品文件夹')
-ok(fs.existsSync(path.join(WS, '.posterwright', 'latest.json')), 'latest.json 落在作品文件夹内')
+ok(fs.existsSync(path.join(WS, '.poster8g', 'latest.json')), 'latest.json 落在作品文件夹内')
 
 console.log('save v2')
 const f2 = write('p2.json', proj('新标题', 112, { id: 'c', name: '新增徽标', type: 'image', x: 900, y: 100, w: 200, h: 200 }))

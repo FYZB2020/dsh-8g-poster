@@ -1,8 +1,22 @@
 # Changelog
 
+## 1.0.1
+
+### 修复
+
+- **`poster_qr action=recolor` 在「整图就是一张干净二维码」时定位错位**：原来只用行/列密度剖面找主带，
+  干净码通篇同密度会把码区判偏（实测 1200px 的码被框成 `(235,117,1199,1081)`），换色后解码失败。
+  现在先用 `ImageChops` 求「与背景色差 > thr」的像素外接框，若接近正方形且占画面 55% 以上就直接用它，
+  否则才退回密度剖面。同一张码换色后重新可解码，`test/tools.mjs` 复绿。
+
+### 变更
+
+- 品牌与包名定为 **`dsh-8g-poster` / Poster8G · 8G 海报**；MCP 服务键 `poster8g`，命令行 `poster8g-mcp`，
+  运行期状态目录 `~/.poster8g/`。
+
 ## 1.0.0
 
-首个公开发布版。项目从 `poster-forge` / PosterForge 改名为 **posterwright** / **Posterwright · 海报匠**。
+首个公开发布版。项目从 `poster-forge` / PosterForge 改名为 **poster8g** / **Poster8G · 8G 海报**。
 
 ### 新增
 
@@ -11,7 +25,7 @@
 - **Alt+单击穿透选中**：画布上按住 Alt 点一下，选中光标下面被盖住的那一层；再 Alt 点继续往下，
   到底回顶，选中时有 toast 提示「第 N / M 层」。锁定的图层也按同一规则穿透。
 - **版本链真正可用**：`poster_workspace action=save` 除了把项目存进作品文件夹，还会写一版快照到
-  `<作品文件夹>/.posterwright/versions/`，并更新 `latest.json`；`poster_versions` 的
+  `<作品文件夹>/.poster8g/versions/`，并更新 `latest.json`；`poster_versions` 的
   `list / latest / diff` 读的就是这条链（以前写版本的路由被删了，链一直是空的）。
 - **模型文件名可用环境变量覆盖**：`POSTER_COMFY`、`POSTER_UNET`、`POSTER_CLIP`、`POSTER_VAE`、
   `POSTER_MOSS_UNET`、`POSTER_MOSS_CLIP`、`POSTER_MOSS_CTRL_LORA`、`POSTER_MOSS_EDIT_LORA`。
@@ -22,7 +36,7 @@
 
 - 删掉已停用的宿主 `/api/poster-forge/*` 死代码（路由 0.5.4 起就没注册，留着只诱导用户开死链）。
 - `poster_check` 默认读版本链里的 `latest.json`，跟着作品文件夹走，不再依赖当前工作目录。
-- 工作台配置目录 `~/.posterforge` → `~/.posterwright`，同时保留旧目录读取，老用户无感迁移。
+- 工作台配置目录 `~/.posterforge` → `~/.poster8g`，同时保留旧目录读取，老用户无感迁移。
 - 三个 python 客户端的 ComfyUI 地址/模型名改为环境变量优先。
 
 ### 修掉的问题

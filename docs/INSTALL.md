@@ -147,13 +147,13 @@ MOSS equivalents: `POSTER_MOSS_UNET`, `POSTER_MOSS_CLIP`, `POSTER_MOSS_CTRL_LORA
 ## 4. Install the plugin
 
 ```bash
-dsh plugin add dsh-posterwright
+dsh plugin add dsh-8g-poster
 ```
 
 Or install globally and wire it up yourself:
 
 ```bash
-npm i -g dsh-posterwright
+npm i -g dsh-8g-poster
 ```
 
 From a local checkout:
@@ -175,7 +175,7 @@ node server/index.js        # stdio MCP server
 ```json
 {
   "mcpServers": {
-    "posterwright": {
+    "poster8g": {
       "command": "node",
       "args": ["path/to/poster-forge/server/index.js"],
       "env": { "POSTER_PYTHON": "python" }

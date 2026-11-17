@@ -41,7 +41,7 @@
 | `status` | 看有没有设过；没设就该问用户要一个绝对路径 |
 | `set` + `dir` | 写入（只做一次，之后别再问） |
 | `list` | 列该目录下的项目 JSON |
-| `save` + `file` + `name` | 把项目存进去，**同时写一版快照**到 `<文件夹>/.posterwright/versions/` 并更新 `latest.json` |
+| `save` + `file` + `name` | 把项目存进去，**同时写一版快照**到 `<文件夹>/.poster8g/versions/` 并更新 `latest.json` |
 
 ### 3. `poster_generate` —— 本机出图
 | 参数 | 说明 |
@@ -147,7 +147,7 @@
 ## 四、一条完整流水线（示例）
 
 ```
-你：用海报匠做一张掼蛋扑克牌海报
+你：用8G 海报做一张掼蛋扑克牌海报
 AI：poster_guide → poster_workspace(status) → 问你路径
 你：N:\海报项目
 AI：poster_workspace(set) → 问走 flux 还是 moss

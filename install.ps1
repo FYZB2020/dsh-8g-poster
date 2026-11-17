@@ -1,4 +1,4 @@
-# Posterwright 安装脚本：把插件挂进当前 DSH profile 的 MCP 列表
+# Poster8G 安装脚本：把插件挂进当前 DSH profile 的 MCP 列表
 param([string]$Profile = "desktop", [string]$Python = "")
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -18,7 +18,7 @@ if (Test-Path $settingsPath) {
 if (-not $json.PSObject.Properties["mcpServers"]) {
   $json | Add-Member -NotePropertyName mcpServers -NotePropertyValue ([pscustomobject]@{})
 }
-$json.mcpServers | Add-Member -NotePropertyName "posterwright" -NotePropertyValue $cfg -Force
+$json.mcpServers | Add-Member -NotePropertyName "poster8g" -NotePropertyValue $cfg -Force
 $json | ConvertTo-Json -Depth 12 | Set-Content $settingsPath -Encoding UTF8
 Write-Host "已写入 $settingsPath"
-Write-Host "重启 DSH 后，工具列表里会出现 posterwright 的 13 个工具。"
+Write-Host "重启 DSH 后，工具列表里会出现 poster8g 的 13 个工具。"

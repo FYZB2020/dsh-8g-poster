@@ -1,6 +1,6 @@
 <div align="center">
 
-# 海报匠 · Posterwright
+# 8G 海报 · Poster8G
 
 **8GB 显存，也能开一间自己的海报印刷厂。**
 
@@ -10,7 +10,7 @@
 
 </div>
 
-![海报匠出图](assets/showcase/posters.webp)
+![8G 海报出图](assets/showcase/posters.webp)
 
 五张海报，一条流水线。左边三张是東方Project 同人（AI 生成 → 抠图 → 排版 → 导出印刷件）；
 右边两张是扑克牌产品上市：深红漆面礼盒白底实拍 → 抠成透明 PNG → 压在 AI 生成的背景上，
@@ -48,7 +48,7 @@ int8 权重、`--lowvram`、1024 级出图、一次只跑一个任务。两个�
 
 ```bash
 # 1. 装插件
-dsh plugin add dsh-posterwright        # 或 npm i -g dsh-posterwright
+dsh plugin add dsh-8g-poster        # 或 npm i -g dsh-8g-poster
 
 # 2. python 侧依赖（Pillow、numpy、opencv、reportlab、qrcode、zxing-cpp）
 python -m pip install -r skill/requirements.txt
@@ -80,7 +80,7 @@ python -m pip install -r skill/requirements.txt
 ## 一次完整对话长什么样
 
 ```
-你：  用海报匠做一张掼蛋扑克牌的海报，产品图我已经抠好了
+你：  用8G 海报做一张掼蛋扑克牌的海报，产品图我已经抠好了
 AI：  poster_guide → poster_workspace(status) → 问走哪条路线
 你：  flux
 AI：  poster_generate ×3  →  三版无字背景

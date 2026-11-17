@@ -146,13 +146,13 @@ MOSS 对应的四个变量：`POSTER_MOSS_UNET`、`POSTER_MOSS_CLIP`、`POSTER_M
 ## 4. 装插件
 
 ```bash
-dsh plugin add dsh-posterwright
+dsh plugin add dsh-8g-poster
 ```
 
 或者从 npm 装到全局后手动挂：
 
 ```bash
-npm i -g dsh-posterwright
+npm i -g dsh-8g-poster
 ```
 
 本地开发（就是本仓库）：
@@ -160,7 +160,7 @@ npm i -g dsh-posterwright
 ```bash
 cd path\to\poster-forge
 npm link
-dsh plugin add .            # 或在你 profile 的 package.json 里写 "dsh-posterwright": "link:path/to/poster-forge"
+dsh plugin add .            # 或在你 profile 的 package.json 里写 "dsh-8g-poster": "link:path/to/poster-forge"
 ```
 
 装完重载 DSH，工具表里应出现 13 个 `poster_*` 工具。
@@ -176,7 +176,7 @@ node server/index.js        # stdio MCP server
 ```json
 {
   "mcpServers": {
-    "posterwright": {
+    "poster8g": {
       "command": "node",
       "args": ["path/to/poster-forge/server/index.js"],
       "env": { "POSTER_PYTHON": "python" }

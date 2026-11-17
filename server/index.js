@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-// Posterwright · MCP stdio 服务器（给任意 MCP 客户端用）
+// Poster8G · MCP stdio 服务器（给任意 MCP 客户端用）
 // DSH 作为插件加载时走 lib/index.js，两份共用 lib/core.js 的实现。
 import { TOOLS, callTool } from '../lib/core.js'
 
 const send = (o) => process.stdout.write(JSON.stringify(o) + '\n')
-const log = (...a) => console.error('[posterwright]', ...a)
+const log = (...a) => console.error('[poster8g]', ...a)
 
 let buf = ''
 let chain = Promise.resolve()
@@ -34,7 +34,7 @@ async function handle(msg) {
         result: {
           protocolVersion: (params && params.protocolVersion) || '2024-11-05',
           capabilities: { tools: { listChanged: false } },
-          serverInfo: { name: 'posterwright', version: '0.1.0' },
+          serverInfo: { name: 'poster8g', version: '0.1.0' },
         },
       })
       return

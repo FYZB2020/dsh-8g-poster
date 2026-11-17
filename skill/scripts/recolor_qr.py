@@ -81,21 +81,21 @@ def largest_band(profile, ratio=0.35, gap=20):
     return best
 
 
-def qr_box(im, bg, thr=52):
-    """行密度找纵向主带 → 带内列密度找横向边界 → 正方形约束（二维码必为正方形）"""
-    px = im.load()
+def ink_bbox(im, bg, thr=52):
+    """与背景色差超过 thr 的像素的外接框（C 速度，用 ImageChops 做通道差的最大值）。
+    干净二维码（整图就是码）用它比密度剖面更稳。"""
+    from PIL import ImageChops
+    diff = ImageChops.difference(im, Image.new("RGB", im.size, tuple(bg)))
+    r, g, b = diff.split()
+    m = ImageChops.lighter(ImageChops.lighter(r, g), b)
+    mask = m.point(lambda v: 255 if v > thr else 0)
+    return mask.getbbox()
+
+
+def square_box(im, box):
+    """把任意矩形收敛成正方形（二维码必为正方形），以短边为准对称扩展。"""
     W, H = im.size
-    t2 = thr * thr
-    y0, y1 = largest_band(row_profile(im, bg, thr), gap=max(12, H // 60))
-    cols = [0] * W
-    for y in range(y0, y1 + 1):
-        for x in range(W):
-            if dist2(px[x, y], bg) > t2:
-                cols[x] += 1
-    x0, x1 = largest_band(cols, gap=max(12, H // 60))
-    x1 += 1
-    y1 += 1
-    # 正方形约束：以短边为准，向两边对称扩展
+    x0, y0, x1, y1 = box
     w, h = x1 - x0, y1 - y0
     if w > h:
         cy = (y0 + y1) / 2
@@ -106,6 +106,33 @@ def qr_box(im, bg, thr=52):
         x0 = int(max(0, cx - h / 2))
         x1 = int(min(W, x0 + h))
     return x0, y0, x1, y1
+
+
+def qr_box(im, bg, thr=52):
+    """定位码区：整图就是一个干净码时直接用墨色外接框；
+    否则（官方码常带标题/订阅数/logo）退回行密度找主带的老路。"""
+    W, H = im.size
+    bb = ink_bbox(im, bg, thr)
+    if bb:
+        bw, bh = bb[2] - bb[0], bb[3] - bb[1]
+        short = min(W, H)
+        aspect = bw / float(bh or 1)
+        # 接近正方形、且占了画面大半 → 判定为「干净码」
+        if 0.80 <= aspect <= 1.25 and max(bw, bh) >= 0.55 * short:
+            return square_box(im, bb)
+
+    px = im.load()
+    t2 = thr * thr
+    y0, y1 = largest_band(row_profile(im, bg, thr), gap=max(12, H // 60))
+    cols = [0] * W
+    for y in range(y0, y1 + 1):
+        for x in range(W):
+            if dist2(px[x, y], bg) > t2:
+                cols[x] += 1
+    x0, x1 = largest_band(cols, gap=max(12, H // 60))
+    x1 += 1
+    y1 += 1
+    return square_box(im, (x0, y0, x1, y1))
 
 
 def ink_color(im, bg, box):

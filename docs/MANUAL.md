@@ -35,7 +35,7 @@ unsure what step comes next.
 Every project, version and export lives in one folder. Actions: `status` (is it configured?), `set` + `dir`
 (write it — ask the user for an absolute path, do not pick one for them), `list`, and
 `save` + `file` + `name` (store the project **and** write a snapshot to
-`<folder>/.posterwright/versions/`, updating `latest.json`).
+`<folder>/.poster8g/versions/`, updating `latest.json`).
 
 ### `poster_generate`
 | Param | Notes |
