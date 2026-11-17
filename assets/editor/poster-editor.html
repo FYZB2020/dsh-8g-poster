@@ -19,15 +19,24 @@
   .grp { display: flex; align-items: center; gap: 6px; padding: 0 9px; border-left: 1px solid #2a2f38; }
   .grp .gl { font-size: 11px; color: #79808d; letter-spacing: 1px; margin-right: 2px; }
   .grp:first-of-type { border-left: 0; }
-  #keys { position: fixed; left: 14px; bottom: 14px; z-index: 40; width: 268px;
-    background: rgba(14,17,22,.93); border: 1px solid #2a2f38; border-radius: 10px;
-    font-size: 12px; color: #b8c0cc; box-shadow: 0 8px 24px rgba(0,0,0,.45); overflow: hidden; }
+  /* 快捷键：收起时是一个 46px 圆形按钮，展开才是面板 */
+  #keys { position: fixed; left: 16px; bottom: 16px; z-index: 60; width: 300px;
+    background: rgba(14,17,22,.93); border: 1px solid #2a2f38; border-radius: 12px;
+    font-size: 12px; color: #b8c0cc; box-shadow: 0 8px 24px rgba(0,0,0,.45); overflow: hidden;
+    transition: width .16s, height .16s, border-radius .16s; }
   #keys h3 { margin: 0; padding: 8px 11px; font-size: 12px; font-weight: 600; color: #e9e9ec;
-    background: #20252d; cursor: pointer; display: flex; justify-content: space-between; }
+    background: #20252d; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
   #keys h3 span { color: #79808d; font-weight: 400; }
+  #keys h3 .kbdico { display: none; }
   #keys ul { margin: 0; padding: 8px 11px 10px; list-style: none; max-height: 46vh; overflow: auto; }
-  #keys li { display: flex; justify-content: space-between; gap: 10px; padding: 2.5px 0; }
-  #keys li b { color: #ffd479; font-weight: 600; font-family: Consolas, monospace; }
+  #keys li { display: flex; justify-content: space-between; gap: 10px; padding: 2.5px 0; font-size: 11.5px; }
+  #keys li > span { flex: 1 1 auto; min-width: 0; }
+  #keys li > b { flex: 0 0 auto; }
+  #keys li b { color: #ffd479; font-weight: 600; font-family: Consolas, monospace; white-space: nowrap; }
+  #keys.collapsed { width: 46px; height: 46px; border-radius: 50%; }
+  #keys.collapsed h3 { padding: 0; width: 46px; height: 46px; justify-content: center; border-radius: 50%; }
+  #keys.collapsed h3 .txt, #keys.collapsed h3 > span { display: none; }
+  #keys.collapsed h3 .kbdico { display: block; }
   #keys.collapsed ul { display: none; }
   header h1 { font-size: 14px; font-weight: 700; margin: 0 10px 0 0; letter-spacing: .5px; }
   header h1 span { color: #c0272d; }
@@ -265,20 +274,31 @@ aside h2, #empty b { color:#6b7f96; }
 
 <div id="toast"></div>
 <div id="keys" class="collapsed">
-  <h3 onclick="this.parentNode.classList.toggle('collapsed')">快捷键 <span>点这里收起/展开</span></h3>
+  <h3 onclick="this.parentNode.classList.toggle('collapsed')">
+    <span class="txt">快捷键</span>
+    <svg class="kbdico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+      <rect x="2.5" y="6" width="19" height="12" rx="2.2"/>
+      <path d="M6 10h.01M9.5 10h.01M13 10h.01M16.5 10h.01M6 13.5h.01M9.5 13.5h.01M13 13.5h.01M16.5 13.5h.01M8 16.5h8"/>
+    </svg>
+    <span>点击展开/收起</span>
+  </h3>
   <ul>
+    <li><span>缩放画布（上放大 / 下缩小）</span><b>Ctrl+滚轮</b></li>
+    <li><span>平移画布（放大后用它拖）</span><b>空格+拖动</b></li>
+    <li><span>视图回到 100% 适配</span><b>双击空白</b></li>
     <li><span>上移 / 下移一层（长按连续）</span><b>【 】</b></li>
     <li><span>微调位置（长按加速）</span><b>方向键</b></li>
     <li><span>大幅微调</span><b>Shift+方向键</b></li>
     <li><span>全选</span><b>Ctrl+A</b></li>
     <li><span>取消选择 / 退出裁剪</span><b>Esc</b></li>
-    <li><span>组合 / 取消组合</span><b>Ctrl+G / Ctrl+Shift+G</b></li>
+    <li><span>组合</span><b>Ctrl+G</b></li>
+    <li><span>取消组合</span><b>Ctrl+Shift+G</b></li>
     <li><span>锁定 / 解锁</span><b>Ctrl+L</b></li>
     <li><span>复制一份</span><b>Ctrl+D</b></li>
     <li><span>删除</span><b>Delete</b></li>
     <li><span>居中到画布</span><b>Ctrl+E</b></li>
     <li><span>撤销 / 重做</span><b>Ctrl+Z / Ctrl+Y</b></li>
-    <li><span>框选（拖空白处）/ 加减选</span><b>Shift / Ctrl</b></li>
+    <li><span>框选 / 加减选</span><b>Shift / Ctrl</b></li>
   </ul>
 </div>
 
