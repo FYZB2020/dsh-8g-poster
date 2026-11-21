@@ -1,3 +1,6 @@
+# dsh-8g-poster bundle layer
+# 插入一个 loader 行：node 侧注册 13 个 poster_* 工具与 2 个技能，
+# web 侧注入海报工作台面板。name 必须是可解析的包名。
 - insert:
     - id: poster8g
-      name: poster8g
+      name: dsh-8g-poster

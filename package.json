@@ -1,6 +1,6 @@
 {
   "name": "dsh-8g-poster",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Poster8G · 8G 海报 —— a poster workshop for DeepSeek Harness that runs on your own 8 GB GPU: local AI backgrounds, cut-out assembly, QR verification, an editable workbench, and print-ready output. 本地生图 + 素材合成 + 二维码防错校验 + 可编辑工作台 + 印刷件输出，零按张付费。",
   "keywords": [
     "dsh-plugin",

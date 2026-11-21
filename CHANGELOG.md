@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.2 — 2026-11-21
+
+### Fixed
+- `cordis.patch.yml` pointed the bundle insert at `name: poster8g`, which is the plugin id, not a resolvable module. The bundle therefore never loaded, so `poster_*` tools and the workbench panel disappeared. It now says `name: dsh-8g-poster`, the actual package name (same convention as every other bundle plugin).
+- The rename to `dsh-8g-poster` also left the profile without a `node_modules/dsh-8g-poster` entry and without `dsh-8g-poster` in `dsh.profile.bundles`, so a local install could not resolve the package at all.
+
 ## 1.0.1
 
 ### 修复
