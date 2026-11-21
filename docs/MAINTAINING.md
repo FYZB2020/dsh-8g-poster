@@ -65,6 +65,17 @@ git push origin HEAD; git push origin vX.Y.Z
 - On this machine `git` is configured with `http.sslBackend=schannel`; the OpenSSL backend shipped with Git 2.40 cannot verify current GitHub certificates (`unable to get local issuer certificate`). Do not "fix" that by disabling verification — switch the backend.
 - Local DNS may point `github.com` at `127.0.0.1` (an old local proxy). If pushes fail with `Connection was reset`, check `C:\Windows\System32\drivers\etc\hosts` before blaming the token.
 
+### The network path to github.com is unreliable here
+
+`github.com` is reset or stalled intermittently on this line, while `api.github.com` usually works. The fix that is in place: a tiny CONNECT proxy that pins a working edge IP for `github.com` and probes candidates with a real TLS handshake before dialling.
+
+```powershell
+node N:\dshwork\_tools\github-proxy.cjs 8899     # keep it running in the background
+git config --global http.proxy http://127.0.0.1:8899
+```
+
+`git` is already configured with that proxy. If `git push` reports `Proxy CONNECT aborted` or `Failed to connect`, the proxy is simply not running — start it again. When the pinned IPs stop answering, the proxy re-probes the candidate list by itself; extend `CANDIDATES` if the whole list is stale. TLS stays end-to-end, so certificates are still verified and nothing is decrypted by the proxy.
+
 ## 6. Rollback
 
 - Bad release: `git revert <sha>`, bump patch, release again. Do not force-push `main`.
