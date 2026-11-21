@@ -159,7 +159,7 @@ npm i -g dsh-8g-poster
 From a local checkout:
 
 ```bash
-cd path/to/poster-forge
+cd path/to/dsh-8g-poster
 npm link
 dsh plugin add .
 ```
@@ -177,7 +177,7 @@ node server/index.js        # stdio MCP server
   "mcpServers": {
     "poster8g": {
       "command": "node",
-      "args": ["path/to/poster-forge/server/index.js"],
+      "args": ["path/to/dsh-8g-poster/server/index.js"],
       "env": { "POSTER_PYTHON": "python" }
     }
   }

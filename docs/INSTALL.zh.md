@@ -158,9 +158,9 @@ npm i -g dsh-8g-poster
 本地开发（就是本仓库）：
 
 ```bash
-cd path\to\poster-forge
+cd path\to\dsh-8g-poster
 npm link
-dsh plugin add .            # 或在你 profile 的 package.json 里写 "dsh-8g-poster": "link:path/to/poster-forge"
+dsh plugin add .            # 或在你 profile 的 package.json 里写 "dsh-8g-poster": "link:path/to/dsh-8g-poster"
 ```
 
 装完重载 DSH，工具表里应出现 13 个 `poster_*` 工具。
@@ -178,7 +178,7 @@ node server/index.js        # stdio MCP server
   "mcpServers": {
     "poster8g": {
       "command": "node",
-      "args": ["path/to/poster-forge/server/index.js"],
+      "args": ["path/to/dsh-8g-poster/server/index.js"],
       "env": { "POSTER_PYTHON": "python" }
     }
   }
